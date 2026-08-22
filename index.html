@@ -2046,14 +2046,42 @@
             });
         }
 
-        async function loadFirebaseProfile(authUser) {
-            const profileSnapshot = await firebaseDb.collection('users').doc(authUser.uid).get();
-            if (!profileSnapshot.exists) throw new Error('Firebase user profile is missing.');
+        async function loadFirebaseProfile(authUser, fallbackRole = null) {
+            if (!firebaseDb || !authUser || !authUser.uid) {
+                throw new Error('Firebase user data is missing.');
+            }
 
-            const profile = profileSnapshot.data();
-            if (!['admin', 'cashier'].includes(profile.role)) throw new Error('Firebase user role is invalid.');
+            const resolvedRole = ['admin', 'cashier'].includes(fallbackRole)
+                ? fallbackRole
+                : (authUser.email === 'hachi@admin.com' ? 'admin' : 'cashier');
+            const profileRef = firebaseDb.collection('users').doc(authUser.uid);
+            let profileSnapshot = await profileRef.get();
 
-            const localUser = state.users.find(user => user.role === profile.role);
+            if (!profileSnapshot.exists) {
+                await profileRef.set({
+                    email: authUser.email || '',
+                    role: resolvedRole,
+                    username: (authUser.email || '').split('@')[0] || resolvedRole,
+                    name: resolvedRole === 'admin' ? 'Admin User' : 'Cashier User',
+                    createdAt: new Date().toISOString()
+                }, { merge: true });
+                profileSnapshot = await profileRef.get();
+            }
+
+            const profile = profileSnapshot.data() || {};
+            if (!['admin', 'cashier'].includes(profile.role)) {
+                await profileRef.set({
+                    email: profile.email || authUser.email || '',
+                    role: resolvedRole,
+                    username: profile.username || (authUser.email || '').split('@')[0] || resolvedRole,
+                    name: profile.name || (resolvedRole === 'admin' ? 'Admin User' : 'Cashier User'),
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+                profile.role = resolvedRole;
+            }
+
+            const localUser = state.users.find(user => user.role === profile.role)
+                || state.users.find(user => user.role === resolvedRole);
             if (!localUser) throw new Error('Matching POS role is missing.');
 
             return { ...localUser, email: profile.email || authUser.email, firebaseUid: authUser.uid };
@@ -2248,35 +2276,31 @@
             if (user) {
                 const finishLogin = signedInUser => {
                     currentUser = signedInUser;
-                // Store minimal session data (no password)
-                const sessionData = {
-                    id: signedInUser.id,
-                    username: signedInUser.username,
-                    role: signedInUser.role,
-                    name: signedInUser.name
-                };
-                localStorage.setItem('posSession', JSON.stringify(sessionData));
-                localStorage.setItem('posSessionTime', new Date().toISOString());
-                addAuditLog('login', 'User logged in', null, null, null);
-                showMainApp();
+                    const sessionData = {
+                        id: signedInUser.id,
+                        username: signedInUser.username,
+                        role: signedInUser.role,
+                        name: signedInUser.name
+                    };
+                    localStorage.setItem('posSession', JSON.stringify(sessionData));
+                    localStorage.setItem('posSessionTime', new Date().toISOString());
+                    addAuditLog('login', 'User logged in', null, null, null);
+                    showMainApp();
                     startFirebaseSync();
                     seedFirebaseUsers();
-                showToast(translate('success'), translate('login_success'), 'success');
+                    showToast(translate('success'), translate('login_success'), 'success');
                 };
 
                 if (firebaseAuth) {
                     const email = user.role === 'admin' ? 'hachi@admin.com' : 'dler@cashier.com';
-                    const expectedUid = user.role === 'admin'
-                        ? '4LHEJbvuFdVzBNIj7zs1Azmjq8a2'
-                        : 'X66tjNzNF1fEofWgOJsrZ1lq193';
                     firebaseAuth.signInWithEmailAndPassword(email, password)
                         .then(credential => {
-                            if (credential.user.uid !== expectedUid) {
+                            if (credential.user.email && credential.user.email.toLowerCase() !== email.toLowerCase()) {
                                 return firebaseAuth.signOut().then(() => {
-                                    throw new Error('Firebase Auth UID does not match the configured POS role.');
+                                    throw new Error('Firebase Auth email does not match the configured POS role.');
                                 });
                             }
-                            return loadFirebaseProfile(credential.user);
+                            return loadFirebaseProfile(credential.user, user.role);
                         })
                         .then(finishLogin)
                         .catch(error => {
