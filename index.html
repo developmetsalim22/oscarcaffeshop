@@ -1,0 +1,4550 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop POS System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --success-color: #00b894;
+            --warning-color: #fdcb6e;
+            --danger-color: #d63031;
+            --info-color: #0984e3;
+            --light-bg: #dfe6e9;
+            --dark-bg: #2d3436;
+            --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #667eea);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body.rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            padding: 45px;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo i {
+            font-size: 70px;
+            color: var(--primary-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Navigation Styles */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+        }
+
+        .nav-link.active {
+            color: var(--accent-color) !important;
+            font-weight: 600;
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .stat-card {
+            padding: 30px;
+            border-left: 5px solid var(--primary-color);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+        }
+
+        .stat-card h3 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Table Styles */
+        .table-card {
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+        }
+
+        .table-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--success-color);
+            z-index: 1;
+        }
+
+        .table-card.occupied::before {
+            background: var(--danger-color);
+        }
+
+        .table-card.payment-pending::before {
+            background: var(--warning-color);
+        }
+
+        .table-card.closed::before {
+            background: #6c757d;
+        }
+
+        .table-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .table-info {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .table-item-count {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .table-order-total {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--success-color);
+        }
+
+        .table-timer {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        /* Table Order Preview Tooltip */
+        .table-order-preview {
+            position: absolute;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            min-width: 250px;
+            max-width: 350px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .table-card:hover .table-order-preview {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .preview-header {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-item-name {
+            flex: 1;
+        }
+
+        .preview-item-qty {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-left: 10px;
+        }
+
+        .preview-item-price {
+            font-weight: bold;
+            color: var(--success-color);
+            margin-left: 10px;
+        }
+
+        .preview-total {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid var(--primary-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--success-color);
+            text-align: right;
+        }
+
+        .payment-status-badge {
+            margin-top: 8px;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .payment-status-badge.paid {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 184, 148, 0.3);
+        }
+
+        .payment-status-badge.unpaid {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(253, 203, 110, 0.3);
+        }
+
+        .table-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .table-status {
+            font-size: 0.9rem;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .table-status.available {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .table-status.occupied {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .table-status.payment-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .table-status.closed {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Order Styles */
+        .order-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .product-card {
+            cursor: pointer;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .product-card:hover {
+            transform: scale(1.08) translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 100%);
+        }
+
+        .product-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-success::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-success:hover::before {
+            left: 100%;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(214, 48, 49, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fdcb6e 0%, #f39c12 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(253, 203, 110, 0.3);
+            color: #2d3436;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 203, 110, 0.4);
+        }
+
+        /* Receipt Styles */
+        .receipt {
+            background: white;
+            padding: 30px;
+            max-width: 400px;
+            margin: 0 auto;
+            font-family: 'Courier New', monospace;
+            border: 1px dashed #ccc;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #ccc;
+            padding-bottom: 15px;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .receipt-total {
+            border-top: 2px dashed #ccc;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        /* Modal Styles */
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .modal-title {
+            color: white;
+        }
+
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(111, 78, 55, 0.25);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.open {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.preparing {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .status-badge.ready {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge.payment-pending {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge.paid {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.cancelled {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--dark-bg);
+            min-height: calc(100vh - 56px);
+            padding: 20px 0;
+        }
+
+        .sidebar-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            display: block;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-radius: 5px;
+            margin: 5px 10px;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        body.rtl .sidebar-link i {
+            margin-right: 0;
+            margin-left: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .table-number {
+                font-size: 1.8rem;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        body.rtl .toast-container {
+            right: auto;
+            left: 20px;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+        }
+
+        body.rtl .search-box input {
+            padding-left: 15px;
+            padding-right: 40px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        body.rtl .search-box i {
+            left: auto;
+            right: 15px;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .category-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 25px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .category-tab:hover,
+        .category-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Audit Log */
+        .audit-log-item {
+            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        body.rtl .audit-log-item {
+            border-left: none;
+            border-right: 3px solid var(--primary-color);
+        }
+
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .receipt, .receipt * {
+                visibility: visible;
+            }
+
+            .receipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+            }
+        }
+
+        /* Low Stock Warning */
+        .low-stock {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+        }
+
+        .out-of-stock {
+            background-color: #f8d7da;
+            border: 1px solid #dc3545;
+        }
+
+        /* Waseel/Gheer Waseel Status */
+        .waseel-status {
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .waseel-status.waseel {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .waseel-status.gheer-waseel {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Payment Success Animation */
+        .payment-success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .payment-success-content {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            animation: bounceIn 0.8s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: #00b894;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .success-checkmark {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .success-checkmark i {
+            font-size: 60px;
+            color: white;
+        }
+
+        /* Floating particles for background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Oscar Caffe visual theme */
+        :root {
+            --primary-color: #b88a44;
+            --secondary-color: #7b552b;
+            --accent-color: #e7c27d;
+            --dark-bg: #171513;
+            --light-bg: #f3eee6;
+            --card-shadow: 0 12px 30px rgba(35, 25, 15, 0.12);
+        }
+
+        body {
+            background: #f3eee6;
+            color: #29231d;
+        }
+
+        .login-container {
+            background: linear-gradient(120deg, rgba(23, 21, 19, 0.96), rgba(61, 43, 28, 0.92)), url('https://oscarcaffeshop.netlify.app/logo.png') center / cover;
+        }
+
+        .login-container::before {
+            background: radial-gradient(circle at center, rgba(231, 194, 125, 0.16), transparent 58%);
+        }
+
+        .login-card {
+            max-width: 440px;
+            border: 1px solid rgba(231, 194, 125, 0.35);
+            border-radius: 8px;
+            background: rgba(30, 26, 22, 0.94);
+            color: #f8f0e5;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+        }
+
+        .login-logo i { color: var(--accent-color); }
+        .login-logo h2 { letter-spacing: 0.12em; text-transform: uppercase; }
+        .login-logo p, .login-card .text-muted { color: #cbbda9 !important; }
+        .login-card .form-label { color: #eadbc6; }
+        .login-card .form-control { background: #f8f3ec; border: 0; border-radius: 4px; }
+
+        .navbar { background: #171513; border-bottom: 1px solid rgba(231, 194, 125, 0.28); }
+        .navbar-brand { color: var(--accent-color) !important; letter-spacing: 0.06em; }
+        .nav-link.active { color: var(--accent-color) !important; }
+        .sidebar { background: #211d19; }
+        .sidebar-link:hover, .sidebar-link.active { background: #8a6032; }
+        .card { border-radius: 8px; background: #fffdf9; }
+        .stat-card { border-left-color: var(--primary-color); background: #fffdf9; }
+        .stat-card h3, .table-number, .product-price { color: var(--primary-color); }
+        .btn-primary { background: #8a6032; border-radius: 4px; box-shadow: 0 5px 14px rgba(123, 85, 43, 0.25); }
+        .btn-primary:hover { background: #6d4824; }
+        .category-tab { border-color: var(--primary-color); border-radius: 4px; }
+        .category-tab:hover, .category-tab.active { background: var(--primary-color); }
+
+        .language-switcher {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            border: 1px solid rgba(231, 194, 125, 0.5);
+            border-radius: 999px;
+            color: #e7c27d !important;
+            background: rgba(231, 194, 125, 0.08);
+            font-weight: 600;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .language-switcher:hover, .language-switcher:focus {
+            border-color: #e7c27d;
+            background: rgba(231, 194, 125, 0.18);
+            color: #fff4df !important;
+            transform: translateY(-1px);
+        }
+
+        .language-code {
+            min-width: 28px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: #e7c27d;
+            color: #2b2117;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .login-language-switcher { margin-top: 18px; padding: 9px 16px; }
+
+        .realtime-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border: 1px solid #bce8d0;
+            border-radius: 999px;
+            color: #18794e;
+            background: #effaf4;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .realtime-indicator i { animation: livePulse 1.5s ease-in-out infinite; }
+
+        .realtime-indicator.offline {
+            border-color: #f3c2c2;
+            color: #a33a3a;
+            background: #fff4f4;
+        }
+
+        .realtime-indicator.offline i { animation: none; }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.82); }
+        }
+
+        @media (max-width: 576px) {
+            .login-card { margin: 20px; padding: 30px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Payment Success Overlay -->
+    <div class="payment-success-overlay d-none" id="paymentSuccessOverlay">
+        <div class="payment-success-content">
+            <div class="success-checkmark">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 class="text-success mb-3">Payment Successful!</h2>
+            <p class="mb-4">Your order has been saved to the dashboard.</p>
+            <button class="btn btn-success" onclick="closePaymentSuccess()">
+                <i class="fas fa-check-circle"></i> Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="https://oscarcaffeshop.netlify.app/logo.png" alt="Oscar Caffe" style="width:88px;height:88px;object-fit:contain;border-radius:50%;margin-bottom:14px;">
+                <h2 data-translate="login_title">Coffee Shop POS</h2>
+                <p class="text-muted" data-translate="login_subtitle">Point of Sale System</p>
+            </div>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label" data-translate="username">Username</label>
+                    <input type="text" class="form-control" id="loginUsername" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" data-translate="password">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" data-translate="login">Login</button>
+            </form>
+            <div class="mt-3 text-center">
+                <button class="btn language-switcher login-language-switcher" id="langToggleLogin" type="button">
+                    <i class="bi bi-globe2"></i> <span data-translate="switch_language">Switch Language</span>
+                    <span class="language-code">AR</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="d-none">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-mug-hot"></i>
+                    <span data-translate="app_title">Coffee Shop POS</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto" id="navLinks">
+                        <!-- Navigation links will be populated by JS -->
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-2 sidebar d-none d-md-block" id="sidebar">
+                    <!-- Sidebar links will be populated by JS -->
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-md-10 col-12 p-4" id="mainContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-translate="product_details">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" data-translate="product_name_en">Product Name (English)</label>
+                                <input type="text" class="form-control" id="productNameEn" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" data-translate="product_name_ar">Product Name (Arabic)</label>
+                                <input type="text" class="form-control" id="productNameAr" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" data-translate="category">Category</label>
+                                <select class="form-control" id="productCategory" required>
+                                    <!-- Categories will be populated -->
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" data-translate="sku">SKU</label>
+                                <input type="text" class="form-control" id="productSku">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" data-translate="cost_price">Cost Price</label>
+                                <input type="number" step="0.01" class="form-control" id="productCost" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" data-translate="selling_price">Selling Price</label>
+                                <input type="number" step="0.01" class="form-control" id="productPrice" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" data-translate="barcode">Barcode</label>
+                                <input type="text" class="form-control" id="productBarcode">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="status">Status</label>
+                            <select class="form-control" id="productStatus">
+                                <option value="active" data-translate="active">Active</option>
+                                <option value="inactive" data-translate="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="image_url">Image URL</label>
+                            <input type="url" class="form-control" id="productImage">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="upload_image">Upload Image</label>
+                            <input type="file" class="form-control" id="productImageFile" accept="image/*">
+                            <img id="productImagePreview" class="mt-2 d-none" style="max-width:120px;max-height:120px;object-fit:cover;border-radius:10px" alt="Product preview">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-translate="cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveProduct" data-translate="save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal fade" id="categoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-translate="category_details">Category Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <input type="hidden" id="categoryId">
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="category_name_en">Category Name (English)</label>
+                            <input type="text" class="form-control" id="categoryNameEn" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="category_name_ar">Category Name (Arabic)</label>
+                            <input type="text" class="form-control" id="categoryNameAr" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="icon">Icon (Bootstrap class)</label>
+                            <input type="text" class="form-control" id="categoryIcon" placeholder="bi bi-cup-hot">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="status">Status</label>
+                            <select class="form-control" id="categoryStatus">
+                                <option value="active" data-translate="active">Active</option>
+                                <option value="inactive" data-translate="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-translate="cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveCategory" data-translate="save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expense Modal -->
+    <div class="modal fade" id="expenseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-translate="expense_details">Expense Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="expenseForm">
+                        <input type="hidden" id="expenseId">
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="category">Category</label>
+                            <select class="form-control" id="expenseCategory" required>
+                                <option value="rent" data-translate="rent">Rent</option>
+                                <option value="electricity" data-translate="electricity">Electricity</option>
+                                <option value="water" data-translate="water">Water</option>
+                                <option value="internet" data-translate="internet">Internet</option>
+                                <option value="salaries" data-translate="salaries">Salaries</option>
+                                <option value="coffee_beans" data-translate="coffee_beans">Coffee Beans</option>
+                                <option value="milk" data-translate="milk">Milk</option>
+                                <option value="sugar" data-translate="sugar">Sugar</option>
+                                <option value="maintenance" data-translate="maintenance">Maintenance</option>
+                                <option value="other" data-translate="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="description">Description</label>
+                            <input type="text" class="form-control" id="expenseDescription" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="amount">Amount</label>
+                            <input type="number" step="0.01" class="form-control" id="expenseAmount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="date">Date</label>
+                            <input type="date" class="form-control" id="expenseDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="notes">Notes</label>
+                            <textarea class="form-control" id="expenseNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-translate="cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveExpense" data-translate="save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-translate="payment">Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label" data-translate="total_amount">Total Amount</label>
+                        <input type="text" class="form-control" id="paymentTotal" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-translate="payment_method">Payment Method</label>
+                        <select class="form-control" id="paymentMethod">
+                            <option value="cash" data-translate="cash">Cash</option>
+                            <option value="card" data-translate="card">Card</option>
+                            <option value="other" data-translate="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Click "Complete Payment" to mark this order as paid and free the table for new customers.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-translate="cancel">Cancel</button>
+                    <button type="button" class="btn btn-success" id="completePayment" data-translate="complete_payment">Complete Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal fade" id="receiptModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-translate="receipt">Receipt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="receiptContent" class="receipt">
+                        <!-- Receipt content will be generated -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-translate="close">Close</button>
+                    <button type="button" class="btn btn-primary" id="printReceipt" data-translate="print">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-translate="settings">Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="settingsForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" data-translate="shop_name">Shop Name</label>
+                                <input type="text" class="form-control" id="settingShopName">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" data-translate="phone">Phone</label>
+                                <input type="text" class="form-control" id="settingPhone">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" data-translate="address">Address</label>
+                            <input type="text" class="form-control" id="settingAddress">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" data-translate="currency">Currency</label>
+                                <input type="text" class="form-control" id="settingCurrency" value="IQD">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" data-translate="tax_percentage">Tax Percentage (%)</label>
+                                <input type="number" step="0.1" class="form-control" id="settingTax" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" data-translate="service_charge">Service Charge (%)</label>
+                                <input type="number" step="0.1" class="form-control" id="settingServiceCharge" value="0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" data-translate="logo_url">Logo URL</label>
+                                <input type="url" class="form-control" id="settingLogo">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" data-translate="backup_retention">Backup Retention (Days)</label>
+                                <input type="number" class="form-control" id="settingBackupRetention" value="7">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-translate="cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveSettings" data-translate="save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Authorization Modal -->
+    <div class="modal fade" id="adminAuthModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-translate="admin_authorization">Admin Authorization</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label" data-translate="admin_username">Admin Username</label>
+                        <input type="text" class="form-control" id="adminAuthUsername">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-translate="admin_password">Admin Password</label>
+                        <input type="password" class="form-control" id="adminAuthPassword">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-translate="cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="verifyAdmin" data-translate="verify">Verify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Firebase compat SDKs for shared online POS data -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-tkrW8NZYHLR_t-JQMw0otE_rVy0czMo",
+            authDomain: "osccar-caffe-pos.firebaseapp.com",
+            projectId: "osccar-caffe-pos",
+            storageBucket: "osccar-caffe-pos.firebasestorage.app",
+            messagingSenderId: "877183417141",
+            appId: "1:877183417141:web:a4ce62d49dad63f85eaa7c",
+            measurementId: "G-4MC8VPMTJE"
+        };
+
+        let firebaseDb = null;
+        let firebaseAuth = null;
+        let firebaseSyncStarted = false;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            firebaseAuth = firebase.auth();
+            firebaseDb = firebase.firestore();
+        } catch (error) {
+            console.warn('Firebase is unavailable; using local storage fallback.', error);
+        }
+
+        // ============================================
+        // TRANSLATION SYSTEM
+        // ============================================
+        const translations = {
+            en: {
+                login_title: "Coffee Shop POS",
+                login_subtitle: "Point of Sale System",
+                username: "Username",
+                password: "Password",
+                login: "Login",
+                login_success: "Login successful!",
+                demo_credentials: "Demo Credentials:",
+                switch_language: "Switch Language",
+                app_title: "Coffee Shop POS",
+                dashboard: "Dashboard",
+                tables: "Tables",
+                orders: "Orders",
+                products: "Products",
+                categories: "Categories",
+                expenses: "Expenses",
+                reports: "Reports",
+                inventory: "Inventory",
+                audit_log: "Audit Log",
+                settings: "Settings",
+                logout: "Logout",
+                today_sales: "Today's Sales",
+                today_orders: "Today's Orders",
+                today_profit: "Today's Profit",
+                today_expenses: "Today's Expenses",
+                open_tables: "Open Tables",
+                available_tables: "Available Tables",
+                total_products: "Total Products",
+                low_stock: "Low Stock Items",
+                available: "Available",
+                occupied: "Occupied",
+                payment_pending: "Payment Pending",
+                closed: "Closed",
+                order_total: "Order Total",
+                items: "Items",
+                time_opened: "Time Opened",
+                add_product: "Add Product",
+                edit_product: "Edit Product",
+                delete_product: "Delete Product",
+                product_name_en: "Product Name (English)",
+                product_name_ar: "Product Name (Arabic)",
+                category: "Category",
+                sku: "SKU",
+                cost_price: "Cost Price",
+                selling_price: "Selling Price",
+                barcode: "Barcode",
+                stock: "Stock",
+                min_stock: "Minimum Stock",
+                status: "Status",
+                image_url: "Image URL",
+                upload_image: "Upload Image",
+                active: "Active",
+                inactive: "Inactive",
+                save: "Save",
+                cancel: "Cancel",
+                product_details: "Product Details",
+                category_details: "Category Details",
+                category_name_en: "Category Name (English)",
+                category_name_ar: "Category Name (Arabic)",
+                icon: "Icon",
+                add_category: "Add Category",
+                edit_category: "Edit Category",
+                delete_category: "Delete Category",
+                expense_details: "Expense Details",
+                description: "Description",
+                amount: "Amount",
+                date: "Date",
+                notes: "Notes",
+                add_expense: "Add Expense",
+                edit_expense: "Edit Expense",
+                delete_expense: "Delete Expense",
+                rent: "Rent",
+                electricity: "Electricity",
+                water: "Water",
+                internet: "Internet",
+                salaries: "Salaries",
+                coffee_beans: "Coffee Beans",
+                milk: "Milk",
+                sugar: "Sugar",
+                maintenance: "Maintenance",
+                other: "Other",
+                payment: "Payment",
+                total_amount: "Total Amount",
+                payment_method: "Payment Method",
+                cash: "Cash",
+                card: "Card",
+                amount_paid: "Amount Paid",
+                change: "Change",
+                complete_payment: "Complete Payment",
+                receipt: "Receipt",
+                print: "Print",
+                close: "Close",
+                shop_name: "Shop Name",
+                phone: "Phone",
+                address: "Address",
+                currency: "Currency",
+                tax_percentage: "Tax Percentage (%)",
+                service_charge: "Service Charge (%)",
+                logo_url: "Logo URL",
+                backup_retention: "Backup Retention (Days)",
+                admin_authorization: "Admin Authorization",
+                admin_username: "Admin Username",
+                admin_password: "Admin Password",
+                verify: "Verify",
+                sales_today: "Sales Today",
+                sales_week: "Sales This Week",
+                sales_month: "Sales This Month",
+                sales_year: "Sales This Year",
+                best_selling: "Best Selling Products",
+                sales_by_category: "Sales by Category",
+                payment_methods: "Payment Methods",
+                hourly_sales: "Hourly Sales",
+                revenue: "Revenue",
+                profit: "Profit",
+                cost_of_goods: "Cost of Goods",
+                orders_count: "Number of Orders",
+                items_sold: "Items Sold",
+                avg_order_value: "Average Order Value",
+                today: "Today",
+                day: "Day",
+                this_week: "This Week",
+                this_month: "This Month",
+                this_year: "This Year",
+                custom_range: "Custom Range",
+                from_date: "From Date",
+                to_date: "To Date",
+                generate_report: "Generate Report",
+                order_history: "Order History",
+                order_id: "Order ID",
+                table: "Table",
+                cashier: "Cashier",
+                total: "Total",
+                payment_status: "Payment Status",
+                order_status: "Order Status",
+                open: "Open",
+                preparing: "Preparing",
+                ready: "Ready",
+                paid: "Paid",
+                cancelled: "Cancelled",
+                search: "Search",
+                filter: "Filter",
+                all: "All",
+                waseel: "واصل",
+                gheer_waseel: "غير واصل",
+                in_stock: "In Stock",
+                out_of_stock: "Out of Stock",
+                adjust_stock: "Adjust Stock",
+                new_quantity: "New Quantity",
+                reason: "Reason",
+                adjustment_history: "Adjustment History",
+                user: "User",
+                role: "Role",
+                action: "Action",
+                timestamp: "Timestamp",
+                record_id: "Record ID",
+                old_value: "Old Value",
+                new_value: "New Value",
+                clear_order: "Clear Order",
+                cancel_order: "Cancel Order",
+                confirm_cancel: "Are you sure you want to cancel this order?",
+                confirm_delete: "Are you sure you want to delete this?",
+                success: "Success",
+                error: "Error",
+                warning: "Warning",
+                order_completed: "Order completed successfully!",
+                table_available: "Table is now available",
+                invalid_credentials: "Invalid credentials",
+                access_denied: "Access denied",
+                required_field: "This field is required",
+                select_category: "Select Category",
+                no_products: "No products available",
+                no_orders: "No orders found",
+                no_expenses: "No expenses found",
+                no_logs: "No audit logs found",
+                subtotal: "Subtotal",
+                discount: "Discount",
+                tax: "Tax",
+                service_charge: "Service Charge",
+                final_total: "Final Total",
+                fullscreen: "Full Screen",
+                payment_successful: "Payment Successful!",
+                order_saved: "Order saved to dashboard",
+                table_cleared: "Table cleared successfully",
+                active_orders: "Active Orders",
+                realtime_updates: "Live",
+                online: "Online",
+                offline: "Offline",
+                online_login_required: "Online Firebase login is required to use the shared POS.",
+                profile_required: "Your Firebase user profile is missing or invalid.",
+                no_active_orders: "No active orders"
+                ,no_order: "No order",
+                item: "item",
+                items_label: "items",
+                paid_status: "Paid",
+                unpaid_status: "Unpaid",
+                order_details: "Order Details",
+                total_label: "Total",
+                just_now: "Just now",
+                hours_short: "h",
+                minutes_short: "m"
+            },
+            ar: {
+                login_title: "نظام بيع المقهى",
+                login_subtitle: "نظام نقطة البيع",
+                username: "اسم المستخدم",
+                password: "كلمة المرور",
+                login: "تسجيل الدخول",
+                login_success: "تم تسجيل الدخول بنجاح!",
+                demo_credentials: "بيانات التجريبية:",
+                switch_language: "تغيير اللغة",
+                app_title: "نظام بيع المقهى",
+                dashboard: "لوحة التحكم",
+                tables: "الطاولات",
+                orders: "الطلبات",
+                products: "المنتجات",
+                categories: "الفئات",
+                expenses: "المصروفات",
+                reports: "التقارير",
+                inventory: "المخزون",
+                audit_log: "سجل التدقيق",
+                settings: "الإعدادات",
+                logout: "تسجيل الخروج",
+                today_sales: "مبيعات اليوم",
+                today_orders: "طلبات اليوم",
+                today_profit: "ربح اليوم",
+                today_expenses: "مصروفات اليوم",
+                open_tables: "الطاولات المفتوحة",
+                available_tables: "الطاولات المتاحة",
+                total_products: "إجمالي المنتجات",
+                low_stock: "منتجات منخفضة المخزون",
+                available: "متاح",
+                occupied: "مشغول",
+                payment_pending: "في انتظار الدفع",
+                closed: "مغلق",
+                order_total: "إجمالي الطلب",
+                items: "العناصر",
+                time_opened: "وقت الفتح",
+                add_product: "إضافة منتج",
+                edit_product: "تعديل منتج",
+                delete_product: "حذف منتج",
+                product_name_en: "اسم المنتج (إنجليزي)",
+                product_name_ar: "اسم المنتج (عربي)",
+                category: "الفئة",
+                sku: "رمز المنتج",
+                cost_price: "سعر التكلفة",
+                selling_price: "سعر البيع",
+                barcode: "الباركود",
+                stock: "المخزون",
+                min_stock: "الحد الأدنى للمخزون",
+                status: "الحالة",
+                image_url: "رابط الصورة",
+                upload_image: "رفع صورة",
+                active: "نشط",
+                inactive: "غير نشط",
+                save: "حفظ",
+                cancel: "إلغاء",
+                product_details: "تفاصيل المنتج",
+                category_details: "تفاصيل الفئة",
+                category_name_en: "اسم الفئة (إنجليزي)",
+                category_name_ar: "اسم الفئة (عربي)",
+                icon: "الأيقونة",
+                add_category: "إضافة فئة",
+                edit_category: "تعديل فئة",
+                delete_category: "حذف فئة",
+                expense_details: "تفاصيل المصروف",
+                description: "الوصف",
+                amount: "المبلغ",
+                date: "التاريخ",
+                notes: "ملاحظات",
+                add_expense: "إضافة مصروف",
+                edit_expense: "تعديل مصروف",
+                delete_expense: "حذف مصروف",
+                rent: "الإيجار",
+                electricity: "الكهرباء",
+                water: "الماء",
+                internet: "الإنترنت",
+                salaries: "الرواتب",
+                coffee_beans: "حبوب القهوة",
+                milk: "الحليب",
+                sugar: "السكر",
+                maintenance: "الصيانة",
+                other: "أخرى",
+                payment: "الدفع",
+                total_amount: "المبلغ الإجمالي",
+                payment_method: "طريقة الدفع",
+                cash: "نقداً",
+                card: "بطاقة",
+                amount_paid: "المبلغ المدفوع",
+                change: "الباقي",
+                complete_payment: "إتمام الدفع",
+                receipt: "الإيصال",
+                print: "طباعة",
+                close: "إغلاق",
+                shop_name: "اسم المتجر",
+                phone: "الهاتف",
+                address: "العنوان",
+                currency: "العملة",
+                tax_percentage: "نسبة الضريبة (%)",
+                service_charge: "رسوم الخدمة (%)",
+                logo_url: "رابط الشعار",
+                backup_retention: "احتفاظ النسخ الاحتياطية (أيام)",
+                admin_authorization: "تفويض المسؤول",
+                admin_username: "اسم مستخدم المسؤول",
+                admin_password: "كلمة مرور المسؤول",
+                verify: "تحقق",
+                sales_today: "مبيعات اليوم",
+                sales_week: "مبيعات هذا الأسبوع",
+                sales_month: "مبيعات هذا الشهر",
+                sales_year: "مبيعات هذا العام",
+                best_selling: "أكثر المنتجات مبيعاً",
+                sales_by_category: "المبيعات حسب الفئة",
+                payment_methods: "طرق الدفع",
+                hourly_sales: "المبيعات بالساعة",
+                revenue: "الإيرادات",
+                profit: "الربح",
+                cost_of_goods: "تكلفة البضائع",
+                orders_count: "عدد الطلبات",
+                items_sold: "العناصر المباعة",
+                avg_order_value: "متوسط قيمة الطلب",
+                today: "اليوم",
+                day: "يوم",
+                this_week: "هذا الأسبوع",
+                this_month: "هذا الشهر",
+                this_year: "هذا العام",
+                custom_range: "نطاق مخصص",
+                from_date: "من تاريخ",
+                to_date: "إلى تاريخ",
+                generate_report: "إنشاء تقرير",
+                order_history: "سجل الطلبات",
+                order_id: "رقم الطلب",
+                table: "الطاولة",
+                cashier: "الكاشير",
+                total: "الإجمالي",
+                payment_status: "حالة الدفع",
+                order_status: "حالة الطلب",
+                open: "مفتوح",
+                preparing: "قيد التحضير",
+                ready: "جاهز",
+                paid: "مدفوع",
+                cancelled: "ملغي",
+                search: "بحث",
+                filter: "تصفية",
+                all: "الكل",
+                waseel: "واصل",
+                gheer_waseel: "غير واصل",
+                in_stock: "متوفر",
+                out_of_stock: "نفذت الكمية",
+                adjust_stock: "تعديل المخزون",
+                new_quantity: "الكمية الجديدة",
+                reason: "السبب",
+                adjustment_history: "سجل التعديلات",
+                user: "المستخدم",
+                role: "الدور",
+                action: "الإجراء",
+                timestamp: "الوقت",
+                record_id: "رقم السجل",
+                old_value: "القيمة القديمة",
+                new_value: "القيمة الجديدة",
+                clear_order: "مسح الطلب",
+                cancel_order: "إلغاء الطلب",
+                confirm_cancel: "هل أنت متأكد من إلغاء هذا الطلب؟",
+                confirm_delete: "هل أنت متأكد من الحذف؟",
+                success: "نجاح",
+                error: "خطأ",
+                warning: "تحذير",
+                order_completed: "تم إكمال الطلب بنجاح!",
+                table_available: "الطاولة متاحة الآن",
+                invalid_credentials: "بيانات اعتماد غير صالحة",
+                access_denied: "تم رفض الوصول",
+                required_field: "هذا الحقل مطلوب",
+                select_category: "اختر الفئة",
+                no_products: "لا توجد منتجات متاحة",
+                no_orders: "لا توجد طلبات",
+                no_expenses: "لا توجد مصروفات",
+                no_logs: "لا توجد سجلات تدقيق",
+                subtotal: "المجموع الفرعي",
+                discount: "خصم",
+                tax: "ضريبة",
+                service_charge: "رسوم خدمة",
+                final_total: "الإجمالي النهائي",
+                fullscreen: "ملء الشاشة",
+                payment_successful: "تم الدفع بنجاح!",
+                order_saved: "تم حفظ الطلب في لوحة التحكم",
+                table_cleared: "تم مسح الطاولة بنجاح",
+                active_orders: "الطلبات النشطة",
+                realtime_updates: "مباشر",
+                online: "متصل",
+                offline: "غير متصل",
+                online_login_required: "يجب تسجيل الدخول عبر Firebase لاستخدام نظام البيع المشترك.",
+                profile_required: "ملف مستخدم Firebase غير موجود أو غير صالح.",
+                no_active_orders: "لا توجد طلبات نشطة"
+                ,no_order: "لا يوجد طلب",
+                item: "عنصر",
+                items_label: "عناصر",
+                paid_status: "مدفوع",
+                unpaid_status: "غير مدفوع",
+                order_details: "تفاصيل الطلب",
+                total_label: "الإجمالي",
+                just_now: "الآن",
+                hours_short: "س",
+                minutes_short: "د"
+            }
+        };
+
+        let currentLanguage = 'en';
+        let currentUser = null;
+        let currentPage = 'dashboard';
+        let selectedProductImage = '';
+        let dashboardRefreshTimer = null;
+        let reportCharts = [];
+        let firebaseConnected = false;
+        const syncChannel = 'BroadcastChannel' in window ? new BroadcastChannel('oscar-pos-sync') : null;
+
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            users: [
+                { id: 1, username: 'admin', password: 'Hachi4321', role: 'admin', name: 'Admin User' },
+                { id: 2, username: 'cashier', password: 'Dler1234', role: 'cashier', name: 'Cashier User' }
+            ],
+            tables: [],
+            products: [],
+            categories: [],
+            orders: [],
+            orderHistory: [],
+            expenses: [],
+            inventory: [],
+            auditLogs: [],
+            settings: {
+                shopName: 'Coffee Shop',
+                phone: '+1234567890',
+                address: '123 Main Street',
+                currency: 'IQD ',
+                tax: 0,
+                serviceCharge: 0,
+                logo: '',
+                backupRetention: 7
+            },
+            menuVersion: 2,
+            currentOrder: null,
+            currentTable: null
+        };
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function init() {
+            console.log('Initializing app...');
+            loadFromStorage();
+            console.log('State after load:', state);
+            console.log('Users in state:', state.users);
+            
+            if (state.tables.length === 0) {
+                console.log('Initializing demo data...');
+                initializeDemoData();
+            }
+            
+            setupEventListeners();
+            createParticles();
+            if (firebaseAuth) {
+                firebaseAuth.onAuthStateChanged(user => {
+                    if (user) {
+                        loadFirebaseProfile(user).then(signedInUser => {
+                            currentUser = signedInUser;
+                            localStorage.setItem('posSession', JSON.stringify({
+                                id: signedInUser.id,
+                                username: signedInUser.username,
+                                role: signedInUser.role,
+                                name: signedInUser.name
+                            }));
+                            checkSession();
+                            startFirebaseSync();
+                            seedFirebaseUsers();
+                        }).catch(error => {
+                            console.warn('Firebase profile load failed.', error);
+                            firebaseAuth.signOut();
+                        });
+                    } else {
+                        currentUser = null;
+                        localStorage.removeItem('posSession');
+                        localStorage.removeItem('posSessionTime');
+                        showLoginPage();
+                    }
+                });
+            } else {
+                showLoginPage();
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const savedState = localStorage.getItem('posState');
+                if (savedState) {
+                    const parsed = JSON.parse(savedState);
+                    const defaultUsers = state.users;
+                    Object.assign(state, parsed);
+                    state.users = defaultUsers.map(defaultUser =>
+                        state.users?.find(user => user.id === defaultUser.id) || defaultUser
+                    ).concat((state.users || []).filter(user =>
+                        !defaultUsers.some(defaultUser => defaultUser.id === user.id)
+                    ));
+                    // Reset session-specific data
+                    state.currentOrder = null;
+                    state.currentTable = null;
+                    if (state.menuVersion !== 2) {
+                        applyOscarMenu();
+                        state.menuVersion = 2;
+                        saveToStorage();
+                    }
+                    console.log('Data loaded successfully from storage');
+                }
+            } catch (error) {
+                console.error('Error loading from storage:', error);
+                showToast('Error', 'Failed to load data', 'error');
+            }
+        }
+
+        function saveToStorage() {
+            try {
+                const stateToSave = {
+                    ...state,
+                    // Don't save sensitive session data
+                    currentOrder: null,
+                    currentTable: null
+                };
+                localStorage.setItem('posState', JSON.stringify(stateToSave));
+                localStorage.setItem('posLastSave', new Date().toISOString());
+                if (syncChannel) syncChannel.postMessage({ type: 'state-updated' });
+                if (firebaseDb) {
+                    firebaseDb.collection('pos').doc('sharedState').set(stateToSave)
+                        .catch(error => console.warn('Firebase save failed; local data is still saved.', error));
+                }
+                if (currentUser && currentPage === 'dashboard' && document.getElementById('mainApp') && !document.getElementById('mainApp').classList.contains('d-none')) {
+                    renderDashboard();
+                }
+            } catch (error) {
+                console.error('Error saving to storage:', error);
+                showToast('Error', 'Failed to save data', 'error');
+            }
+        }
+
+        function startFirebaseSync() {
+            if (!firebaseDb || firebaseSyncStarted) return;
+            firebaseSyncStarted = true;
+
+            firebaseDb.collection('pos').doc('sharedState').onSnapshot(snapshot => {
+                firebaseConnected = true;
+                updateOnlineStatus();
+                if (!snapshot.exists) {
+                    const stateToSave = { ...state, currentOrder: null, currentTable: null };
+                    firebaseDb.collection('pos').doc('sharedState').set(stateToSave).catch(error => {
+                        console.warn('Firebase initial sync failed; local data remains available.', error);
+                    });
+                    return;
+                }
+
+                const tableId = state.currentTable?.id;
+                const orderId = state.currentOrder?.id;
+                const remoteState = snapshot.data();
+                const defaultUsers = state.users;
+                Object.assign(state, remoteState);
+                state.users = defaultUsers.map(defaultUser =>
+                    state.users?.find(user => user.id === defaultUser.id) || defaultUser
+                ).concat((state.users || []).filter(user =>
+                    !defaultUsers.some(defaultUser => defaultUser.id === user.id)
+                ));
+                state.currentTable = tableId ? state.tables.find(table => table.id === tableId) || null : null;
+                state.currentOrder = orderId ? state.orders.find(order => order.id === orderId) || null : null;
+
+                if (currentUser && document.getElementById('mainApp') && !document.getElementById('mainApp').classList.contains('d-none')) {
+                    navigateTo(currentPage);
+                }
+            }, error => {
+                firebaseConnected = false;
+                updateOnlineStatus();
+                console.warn('Firebase realtime sync failed.', error);
+            });
+        }
+
+        function seedFirebaseUsers() {
+            if (!firebaseDb || !currentUser || currentUser.role !== 'admin') return;
+
+            const users = [
+                { id: '4LHEJbvuFdVzBNIj7zs1Azmjq8a2', email: 'hachi@admin.com', role: 'admin' },
+                { id: 'X66tjNzNF1fEoIFwgOJsrZ1lq193', email: 'dler@cashier.com', role: 'cashier' }
+            ];
+
+            users.forEach(user => {
+                firebaseDb.collection('users').doc(user.id).set({
+                    email: user.email,
+                    role: user.role
+                }, { merge: true }).catch(error => {
+                    console.warn(`Could not create Firestore user ${user.email}. Check Firestore rules.`, error);
+                });
+            });
+        }
+
+        async function loadFirebaseProfile(authUser) {
+            const profileSnapshot = await firebaseDb.collection('users').doc(authUser.uid).get();
+            if (!profileSnapshot.exists) throw new Error('Firebase user profile is missing.');
+
+            const profile = profileSnapshot.data();
+            if (!['admin', 'cashier'].includes(profile.role)) throw new Error('Firebase user role is invalid.');
+
+            const localUser = state.users.find(user => user.role === profile.role);
+            if (!localUser) throw new Error('Matching POS role is missing.');
+
+            return { ...localUser, email: profile.email || authUser.email, firebaseUid: authUser.uid };
+        }
+
+        function initializeDemoData() {
+            // Initialize 13 tables
+            for (let i = 1; i <= 13; i++) {
+                state.tables.push({
+                    id: i,
+                    number: i,
+                    status: 'available',
+                    orderId: null,
+                    waseelStatus: 'waseel'
+                });
+            }
+
+            applyOscarMenu();
+
+            // Initialize inventory
+            state.products.forEach(product => {
+                state.inventory.push({
+                    productId: product.id,
+                    quantity: product.stock,
+                    adjustments: []
+                });
+            });
+
+            saveToStorage();
+        }
+
+        function applyOscarMenu() {
+            state.categories = [
+                { id: 1, nameEn: 'Games', nameAr: 'Games', icon: 'bi-controller', status: 'active' },
+                { id: 2, nameEn: 'Shisha', nameAr: 'Shisha', icon: 'bi-wind', status: 'active' },
+                { id: 3, nameEn: 'Drinks', nameAr: 'Drinks', icon: 'bi-cup-straw', status: 'active' },
+                { id: 4, nameEn: 'Eat', nameAr: 'Eat', icon: 'bi-egg-fried', status: 'active' }
+            ];
+
+            const menuItems = [
+                ['Domino', 1, 3000], ['Kunkan', 1, 3000],
+                ['Double Apple', 2, 5000], ['Lemon Mint', 2, 5000], ['Oscar Special Recipe', 2, 5000], ['English', 2, 5000], ['Skyfall', 2, 5000],
+                ['Tiger', 3, 1500], ['Plng', 3, 1500], ['Barbican', 3, 1500], ['Smart', 3, 1500], ['White Tiger', 3, 2000], ['Mexico Tiger', 3, 2000], ['Mexico White Tiger', 3, 2500], ['Cola', 3, 1000], ['Fresh', 3, 1000], ['Dani', 3, 1000], ['Rani', 3, 1000], ['Suda', 3, 1000], ['Orange Juice', 3, 2000], ['Banana Milk', 3, 2000], ['Cappuccino', 3, 1000], ['Nescafe', 3, 1000], ['Coffee', 3, 1000], ['Cacao', 3, 1000], ['Milk', 3, 1000],
+                ['Biscuit', 4, 500], ['Cake', 4, 500], ['Popkek', 4, 500], ['Mr Beet', 4, 500], ['Chips', 4, 500]
+            ];
+            const arabicNames = {
+                Domino: 'دومينو', Kunkan: 'كونكان', 'Double Apple': 'تفاحتين', 'Lemon Mint': 'ليمون نعناع',
+                'Oscar Special Recipe': 'خلطة أوسكار الخاصة', English: 'إنجليزي', Skyfall: 'سكاي فول', Tiger: 'تايغر',
+                Plng: 'بلنك', Barbican: 'باربيكان', Smart: 'سمارت', 'White Tiger': 'وايت تايغر',
+                'Mexico Tiger': 'مكسيكو تايغر', 'Mexico White Tiger': 'مكسيكو وايت تايغر', Cola: 'كولا', Fresh: 'فريش',
+                Dani: 'داني', Rani: 'راني', Suda: 'سودا', 'Orange Juice': 'عصير برتقال', 'Banana Milk': 'حليب بالموز',
+                Cappuccino: 'كابتشينو', Nescafe: 'نسكافيه', Coffee: 'قهوة', Cacao: 'كاكاو', Milk: 'حليب',
+                Biscuit: 'بسكويت', Cake: 'كيك', Popkek: 'بوب كيك', 'Mr Beet': 'مستر بيت', Chips: 'شيبس'
+            };
+
+            state.products = menuItems.map(([name, categoryId, price], index) => ({
+                id: index + 1,
+                nameEn: name,
+                nameAr: arabicNames[name] || name,
+                categoryId,
+                cost: 0,
+                price,
+                stock: 100,
+                minStock: 10,
+                sku: `OSCAR${String(index + 1).padStart(3, '0')}`,
+                barcode: String(index + 1).padStart(3, '0'),
+                status: 'active',
+                image: ''
+            }));
+            state.inventory = state.products.map(product => ({
+                productId: product.id,
+                quantity: product.stock,
+                adjustments: []
+            }));
+        }
+
+        function checkSession() {
+            const session = localStorage.getItem('posSession');
+            const sessionTime = localStorage.getItem('posSessionTime');
+            
+            if (session) {
+                // Check if session is expired (24 hours)
+                if (sessionTime) {
+                    const sessionDate = new Date(sessionTime);
+                    const now = new Date();
+                    const hoursDiff = (now - sessionDate) / (1000 * 60 * 60);
+                    
+                    if (hoursDiff > 24) {
+                        // Session expired
+                        localStorage.removeItem('posSession');
+                        localStorage.removeItem('posSessionTime');
+                        showLoginPage();
+                        return;
+                    }
+                }
+                
+                currentUser = JSON.parse(session);
+                // Reconstruct full user object from state
+                const fullUser = state.users.find(u => u.id === currentUser.id);
+                if (fullUser) {
+                    currentUser = fullUser;
+                }
+                showMainApp();
+            } else {
+                showLoginPage();
+            }
+        }
+
+        function resetAllData() {
+            if (confirm('Are you sure you want to reset all data? This will clear all orders, products, and settings.')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('langToggleLogin').addEventListener('click', toggleLanguage);
+            // Navigation
+            document.getElementById('navLinks').addEventListener('click', handleNavigation);
+
+            // Product modal
+            document.getElementById('saveProduct').addEventListener('click', saveProduct);
+            document.getElementById('productImageFile').addEventListener('change', handleProductImageUpload);
+
+            // Category modal
+            document.getElementById('saveCategory').addEventListener('click', saveCategory);
+
+            // Expense modal
+            document.getElementById('saveExpense').addEventListener('click', saveExpense);
+
+            // Payment modal
+            document.getElementById('completePayment').addEventListener('click', completePayment);
+
+            // Receipt modal
+            document.getElementById('printReceipt').addEventListener('click', printReceipt);
+
+            // Settings modal
+            document.getElementById('saveSettings').addEventListener('click', saveSettings);
+
+            // Admin authorization
+            document.getElementById('verifyAdmin').addEventListener('click', verifyAdminAuth);
+            window.addEventListener('storage', event => {
+                if (event.key === 'posState') syncStateFromStorage();
+            });
+            if (syncChannel) syncChannel.addEventListener('message', syncStateFromStorage);
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus();
+        }
+
+        function syncStateFromStorage() {
+            const tableId = state.currentTable?.id;
+            const orderId = state.currentOrder?.id;
+            loadFromStorage();
+            if (tableId) state.currentTable = state.tables.find(table => table.id === tableId) || null;
+            if (orderId) state.currentOrder = state.orders.find(order => order.id === orderId) || null;
+            if (currentUser && document.getElementById('mainApp') && !document.getElementById('mainApp').classList.contains('d-none')) {
+                navigateTo(currentPage);
+            }
+        }
+
+        function updateOnlineStatus() {
+            document.querySelectorAll('.realtime-indicator').forEach(indicator => {
+                const online = navigator.onLine && firebaseConnected;
+                indicator.classList.toggle('offline', !online);
+                indicator.title = translate(online ? 'online' : 'offline');
+                indicator.lastChild.textContent = ` ${translate(online ? 'online' : 'offline')}`;
+            });
+        }
+
+        // ============================================
+        // AUTHENTICATION
+        // ============================================
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            console.log('Login attempt:', username);
+            console.log('Available users:', state.users);
+
+            const user = state.users.find(u => {
+                const accountEmail = u.role === 'admin' ? 'hachi@admin.com' : 'dler@cashier.com';
+                return u.username === username || accountEmail === username;
+            });
+
+            if (user) {
+                const finishLogin = signedInUser => {
+                    currentUser = signedInUser;
+                // Store minimal session data (no password)
+                const sessionData = {
+                    id: signedInUser.id,
+                    username: signedInUser.username,
+                    role: signedInUser.role,
+                    name: signedInUser.name
+                };
+                localStorage.setItem('posSession', JSON.stringify(sessionData));
+                localStorage.setItem('posSessionTime', new Date().toISOString());
+                addAuditLog('login', 'User logged in', null, null, null);
+                showMainApp();
+                    startFirebaseSync();
+                    seedFirebaseUsers();
+                showToast(translate('success'), translate('login_success'), 'success');
+                };
+
+                if (firebaseAuth) {
+                    const email = user.role === 'admin' ? 'hachi@admin.com' : 'dler@cashier.com';
+                    const expectedUid = user.role === 'admin'
+                        ? '4LHEJbvuFdVzBNIj7zs1Azmjq8a2'
+                        : 'X66tjNzNF1fEofWgOJsrZ1lq193';
+                    firebaseAuth.signInWithEmailAndPassword(email, password)
+                        .then(credential => {
+                            if (credential.user.uid !== expectedUid) {
+                                return firebaseAuth.signOut().then(() => {
+                                    throw new Error('Firebase Auth UID does not match the configured POS role.');
+                                });
+                            }
+                            return loadFirebaseProfile(credential.user);
+                        })
+                        .then(finishLogin)
+                        .catch(error => {
+                            console.warn('Firebase login failed.', error);
+                            showToast(translate('error'), translate('online_login_required'), 'error');
+                        });
+                } else {
+                    showToast(translate('error'), translate('online_login_required'), 'error');
+                }
+            } else {
+                addAuditLog('login_failed', `Failed login attempt for username: ${username}`, null, null, null);
+                showToast(translate('error'), translate('invalid_credentials'), 'error');
+            }
+        }
+
+        function logout() {
+            addAuditLog('logout', 'User logged out', null, null, null);
+            currentUser = null;
+            if (firebaseAuth) firebaseAuth.signOut().catch(error => console.warn('Firebase logout failed.', error));
+            localStorage.removeItem('posSession');
+            localStorage.removeItem('posSessionTime');
+            // Clear sensitive session data
+            state.currentOrder = null;
+            state.currentTable = null;
+            showLoginPage();
+            showToast('Success', 'Logged out successfully', 'success');
+        }
+
+        // ============================================
+        // UI MANAGEMENT
+        // ============================================
+        function showLoginPage() {
+            document.getElementById('loginPage').classList.remove('d-none');
+            document.getElementById('mainApp').classList.add('d-none');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginPage').classList.add('d-none');
+            document.getElementById('mainApp').classList.remove('d-none');
+            updateNavigation();
+            renderSidebar();
+            navigateTo('dashboard');
+            clearInterval(dashboardRefreshTimer);
+            dashboardRefreshTimer = setInterval(() => {
+                if (currentPage === 'dashboard') renderDashboard();
+                if (currentPage === 'reports' && document.getElementById('reportPeriod')) generateReport();
+            }, 10000);
+        }
+
+        function updateNavigation() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.innerHTML = `
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-page="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> <span data-translate="dashboard">${translate('dashboard')}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-page="tables">
+                        <i class="fas fa-th"></i> <span data-translate="tables">${translate('tables')}</span>
+                    </a>
+                </li>
+                ${currentUser.role === 'admin' ? `
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-page="products">
+                        <i class="fas fa-box"></i> <span data-translate="products">${translate('products')}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-page="categories">
+                        <i class="fas fa-tags"></i> <span data-translate="categories">${translate('categories')}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-page="expenses">
+                        <i class="fas fa-coins"></i> <span data-translate="expenses">${translate('expenses')}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-page="reports">
+                        <i class="fas fa-chart-line"></i> <span data-translate="reports">${translate('reports')}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-page="audit_log">
+                        <i class="fas fa-history"></i> <span data-translate="audit_log">${translate('audit_log')}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-page="settings">
+                        <i class="fas fa-cog"></i> <span data-translate="settings">${translate('settings')}</span>
+                    </a>
+                </li>
+                ` : ''}
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> <span data-translate="logout">${translate('logout')}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link language-switcher px-3 py-2 ms-lg-2" href="#" id="langToggleMain">
+                        <i class="fas fa-globe"></i> <span data-translate="switch_language">${translate('switch_language')}</span>
+                        <span class="language-code">${currentLanguage === 'en' ? 'AR' : 'EN'}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="fullscreenBtn">
+                        <i class="fas fa-expand"></i> <span data-translate="fullscreen">${translate('fullscreen')}</span>
+                    </a>
+                </li>
+            `;
+
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('langToggleMain').addEventListener('click', toggleLanguage);
+            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+        }
+
+        function renderSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (currentUser.role !== 'admin') {
+                sidebar.innerHTML = '';
+                return;
+            }
+
+            sidebar.innerHTML = `
+                <a class="sidebar-link active" href="#" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> ${translate('dashboard')}
+                </a>
+                <a class="sidebar-link" href="#" data-page="tables">
+                    <i class="fas fa-th"></i> ${translate('tables')}
+                </a>
+                <a class="sidebar-link" href="#" data-page="products">
+                    <i class="fas fa-box"></i> ${translate('products')}
+                </a>
+                <a class="sidebar-link" href="#" data-page="categories">
+                    <i class="fas fa-tags"></i> ${translate('categories')}
+                </a>
+                <a class="sidebar-link" href="#" data-page="expenses">
+                    <i class="fas fa-coins"></i> ${translate('expenses')}
+                </a>
+                <a class="sidebar-link" href="#" data-page="reports">
+                    <i class="fas fa-chart-line"></i> ${translate('reports')}
+                </a>
+                <a class="sidebar-link" href="#" data-page="audit_log">
+                    <i class="fas fa-history"></i> ${translate('audit_log')}
+                </a>
+                <a class="sidebar-link" href="#" data-page="settings">
+                    <i class="fas fa-cog"></i> ${translate('settings')}
+                </a>
+            `;
+
+            sidebar.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', handleNavigation);
+            });
+        }
+
+        function handleNavigation(e) {
+            e.preventDefault();
+            const link = e.target.closest('[data-page]');
+            if (link) {
+                const page = link.dataset.page;
+                if (page) {
+                    navigateTo(page);
+                }
+            }
+        }
+
+        function navigateTo(page) {
+            currentPage = page;
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Render page content
+            const content = document.getElementById('mainContent');
+            switch (page) {
+                case 'dashboard':
+                    renderDashboard();
+                    break;
+                case 'tables':
+                    renderTables();
+                    break;
+                case 'products':
+                    renderProducts();
+                    break;
+                case 'categories':
+                    renderCategories();
+                    break;
+                case 'expenses':
+                    renderExpenses();
+                    break;
+                case 'reports':
+                    renderReports();
+                    break;
+                case 'audit_log':
+                    renderAuditLog();
+                    break;
+                case 'settings':
+                    renderSettings();
+                    break;
+                case 'order':
+                    renderOrder();
+                    break;
+                default:
+                    renderDashboard();
+            }
+
+            applyTranslations();
+        }
+
+    function navigateTo(page) {
+        currentPage = page;
+        
+        // Update navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.dataset.page === page) {
+                link.classList.add('active');
+            }
+        });
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.dataset.page === page) {
+                link.classList.add('active');
+            }
+        });
+
+        // Render page content
+        const content = document.getElementById('mainContent');
+        switch (page) {
+            case 'dashboard':
+                renderDashboard();
+                break;
+            case 'tables':
+                renderTables();
+                break;
+            case 'products':
+                renderProducts();
+                break;
+            case 'categories':
+                renderCategories();
+                break;
+            case 'expenses':
+                renderExpenses();
+                break;
+            case 'reports':
+                renderReports();
+                break;
+            case 'audit_log':
+                renderAuditLog();
+                break;
+            case 'settings':
+                renderSettings();
+                break;
+            case 'order':
+                renderOrder();
+                break;
+            default:
+                renderDashboard();
+        }
+
+        applyTranslations();
+    }
+
+    // ============================================
+    // DASHBOARD
+    // ============================================
+    function renderDashboard() {
+        const content = document.getElementById('mainContent');
+        const today = new Date().toDateString();
+        
+        const todayOrders = state.orderHistory.filter(o => new Date(o.date).toDateString() === today);
+        const todaySales = todayOrders.reduce((sum, o) => sum + o.total, 0);
+        const todayOrdersCount = todayOrders.length;
+        
+        const todayExpenses = state.expenses.filter(e => new Date(e.date).toDateString() === today);
+        const todayExpenseTotal = todayExpenses.reduce((sum, e) => sum + e.amount, 0);
+        
+        const costOfGoods = todayOrders.reduce((sum, o) => {
+            return sum + o.items.reduce((itemSum, item) => {
+                const product = state.products.find(p => p.id === item.productId);
+                return itemSum + (product ? product.cost * item.quantity : 0);
+            }, 0);
+        }, 0);
+        
+        const profit = todaySales - costOfGoods - todayExpenseTotal;
+        
+        const openTables = state.tables.filter(t => t.status === 'occupied' || t.status === 'payment-pending').length;
+        const availableTables = state.tables.filter(t => t.status === 'available').length;
+        
+        const lowStockProducts = state.products.filter(p => p.stock <= p.minStock);
+        
+        // Get active orders for real-time view
+        const activeOrders = state.orders.map(order => {
+            const table = state.tables.find(t => t.id === order.tableId);
+            const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
+            const orderTotal = calculateOrderTotal(order);
+            return {
+                ...order,
+                tableNumber: table ? table.number : 'N/A',
+                itemCount,
+                orderTotal,
+                itemSummary: order.items.map(item => {
+                    const product = state.products.find(p => p.id === item.productId);
+                    return product ? `${currentLanguage === 'ar' ? product.nameAr : product.nameEn} x${item.quantity}` : '';
+                }).filter(Boolean).join(', ')
+            };
+        });
+        
+        content.innerHTML = `
+        <h2 class="mb-4" data-translate="dashboard">${translate('dashboard')}</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${state.settings.currency}${todaySales.toLocaleString()}</h3>
+                    <p data-translate="sales_today">${translate('sales_today')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${todayOrdersCount}</h3>
+                    <p data-translate="orders_today">${translate('orders_today')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${state.settings.currency}${profit.toLocaleString()}</h3>
+                    <p data-translate="profit_today">${translate('profit_today')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${state.settings.currency}${todayExpenseTotal.toLocaleString()}</h3>
+                    <p data-translate="expenses_today">${translate('expenses_today')}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${openTables}</h3>
+                    <p data-translate="open_tables">${translate('open_tables')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${availableTables}</h3>
+                    <p data-translate="available_tables">${translate('available_tables')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${lowStockProducts.length}</h3>
+                    <p data-translate="low_stock">${translate('low_stock')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${activeOrders.length}</h3>
+                    <p data-translate="active_orders">${translate('active_orders')}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Active Orders Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3 gap-3">
+                        <h5 class="mb-0"><i class="fas fa-receipt"></i> ${translate('active_orders')}</h5>
+                        <span class="realtime-indicator" title="${translate('realtime_updates')}">
+                            <i class="fas fa-circle"></i> ${translate('realtime_updates')}
+                        </span>
+                    </div>
+                    ${activeOrders.length === 0 ? `
+                        <p class="text-muted" data-translate="no_active_orders">${translate('no_active_orders')}</p>
+                    ` : `
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>${translate('table')}</th>
+                                        <th>${translate('items')}</th>
+                                        <th>${translate('total')}</th>
+                                        <th>${translate('status')}</th>
+                                        <th>${translate('time_opened')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${activeOrders.map(order => `
+                                        <tr>
+                                            <td><strong>${translate('table')} ${order.tableNumber}</strong></td>
+                                            <td>
+                                                <i class="fas fa-shopping-cart"></i> ${order.itemSummary || order.itemCount}
+                                            </td>
+                                            <td><strong><i class="fas fa-money-bill-wave"></i> ${state.settings.currency}${order.orderTotal.toLocaleString()}</strong></td>
+                                            <td>
+                                                <span class="badge ${order.status === 'paid' ? 'bg-success' : 'bg-warning'}">
+                                                    ${translate(order.status === 'paid' ? 'paid_status' : 'unpaid_status')}
+                                                </span>
+                                            </td>
+                                            <td>${getTimeElapsed(order.createdAt)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `}
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-6 mb-4">
+                <div class="card p-4">
+                    <h5 class="mb-3" data-translate="sales_today_chart">${translate('sales_today_chart')}</h5>
+                    <canvas id="salesTodayChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card p-4">
+                    <h5 class="mb-3" data-translate="best_selling">${translate('best_selling')}</h5>
+                    <canvas id="bestSellingChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        ${lowStockProducts.length > 0 ? `
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card p-4" style="background: linear-gradient(135deg, rgba(253, 203, 110, 0.1) 0%, rgba(225, 112, 85, 0.1) 100%);">
+                        <h5 class="mb-3 text-warning" data-translate="low_stock_warning">${translate('low_stock_warning')}</h5>
+                        <ul class="list-group">
+                            ${lowStockProducts.map(p => `
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${currentLanguage === 'ar' ? p.nameAr : p.nameEn}
+                                    <span class="badge bg-warning">${p.stock} left</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        ` : ''}
+    `;
+
+    renderSalesTodayChart(todayOrders);
+    renderBestSellingChart(todayOrders);
+    applyTranslations();
+}
+
+function renderSalesTodayChart(todayOrders) {
+    const ctx = document.getElementById('salesTodayChart');
+    if (!ctx) return;
+
+    const hours = Array.from({ length: 12 }, (_, i) => `${i * 2}:00`);
+    const salesData = Array(12).fill(0);
+
+    const today = new Date().toDateString();
+    state.orderHistory.filter(o => new Date(o.date).toDateString() === today).forEach(order => {
+        const hour = new Date(order.date).getHours();
+        const index = Math.floor(hour / 2);
+        if (index < 12) {
+            salesData[index] += order.total;
+        }
+    });
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: hours,
+            datasets: [{
+                label: translate('sales'),
+                data: salesData,
+                borderColor: '#6f4e37',
+                backgroundColor: 'rgba(111, 78, 55, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function renderBestSellingChart() {
+    const ctx = document.getElementById('bestSellingChart');
+    if (!ctx) return;
+
+    const productSales = {};
+    state.orderHistory.forEach(order => {
+        order.items.forEach(item => {
+            productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
+        });
+    });
+
+    const sortedProducts = Object.entries(productSales)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+    const labels = sortedProducts.map(([id]) => {
+        const product = state.products.find(p => p.id === parseInt(id));
+        return product ? (currentLanguage === 'ar' ? product.nameAr : product.nameEn) : id;
+    });
+    const data = sortedProducts.map(([, quantity]) => quantity);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: translate('items_sold'),
+                data: data,
+                backgroundColor: [
+                    '#6f4e37',
+                    '#8b7355',
+                    '#d4a574',
+                    '#a0522d',
+                    '#cd853f'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// TABLES
+// ============================================
+function renderTables() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h2 class="mb-4" data-translate="tables">${translate('tables')}</h2>
+        
+        <div class="row" id="tablesGrid">
+            ${state.tables.map(table => {
+                const order = state.orders.find(o => o.id === table.orderId);
+                const itemCount = order ? order.items.reduce((sum, item) => sum + item.quantity, 0) : 0;
+                const orderTotal = order ? calculateOrderTotal(order) : 0;
+                const timeOpen = order ? getTimeElapsed(order.createdAt) : '';
+                
+                return `
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card table-card ${table.status}" onclick="openTable(${table.id})">
+                        <div class="card-body text-center">
+                            <div class="table-number">${table.number}</div>
+                            <div class="table-status ${table.status}">
+                                ${translate(table.status)}
+                            </div>
+                            <div class="payment-status-badge ${order && order.status === 'paid' ? 'paid' : 'unpaid'}">
+                                <i class="fas ${order && order.status === 'paid' ? 'fa-check-circle' : 'fa-clock'}"></i>
+                                ${translate(order && order.status === 'paid' ? 'paid_status' : 'unpaid_status')}
+                            </div>
+                            ${table.orderId && order ? `
+                                <div class="table-info">
+                                    <div class="table-item-count">
+                                        <i class="fas fa-shopping-cart"></i> ${itemCount} ${translate(itemCount === 1 ? 'item' : 'items_label')}
+                                    </div>
+                                    <div class="table-order-total">
+                                        <i class="fas fa-money-bill-wave"></i> ${state.settings.currency}${orderTotal.toLocaleString()}
+                                    </div>
+                                    ${timeOpen ? `
+                                        <div class="table-timer">
+                                            <i class="fas fa-clock"></i> ${timeOpen}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                ${order && order.items.length > 0 ? `
+                                    <div class="table-order-preview">
+                                        <div class="preview-header">
+                                            <i class="fas fa-receipt"></i> ${translate('order_details')}
+                                        </div>
+                                        ${order.items.map(item => {
+                                            const product = state.products.find(p => p.id === item.productId);
+                                            if (!product) return '';
+                                            return `
+                                                <div class="preview-item">
+                                                    <span class="preview-item-name">${currentLanguage === 'ar' ? product.nameAr : product.nameEn}</span>
+                                                    <span class="preview-item-qty">×${item.quantity}</span>
+                                                    <span class="preview-item-price">${state.settings.currency}${(product.price * item.quantity).toLocaleString()}</span>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                        <div class="preview-total">
+                                            ${translate('total_label')}: ${state.settings.currency}${orderTotal.toLocaleString()}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            ` : `<div class="text-muted mt-2">${translate('no_order')}</div>`}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+
+    applyTranslations();
+}
+
+function getTimeElapsed(startTime) {
+    const start = new Date(startTime);
+    const now = new Date();
+    const diff = now - start;
+    
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours > 0) {
+        return `${hours}${translate('hours_short')} ${minutes}${translate('minutes_short')}`;
+    } else if (minutes > 0) {
+        return `${minutes}${translate('minutes_short')}`;
+    } else {
+        return translate('just_now');
+    }
+}
+
+function openTable(tableId) {
+    const table = state.tables.find(t => t.id === tableId);
+    if (!table) return;
+
+    state.currentTable = table;
+
+    if (table.orderId) {
+        state.currentOrder = state.orders.find(o => o.id === table.orderId);
+        if (!state.currentOrder) {
+            // If order not found in active orders, create new one
+            state.currentOrder = {
+                id: Date.now(),
+                tableId: tableId,
+                items: [],
+                status: 'open',
+                createdAt: new Date().toISOString(),
+                cashierId: currentUser.id
+            };
+            table.orderId = state.currentOrder.id;
+            state.orders.push(state.currentOrder);
+            table.status = 'occupied';
+            saveToStorage();
+        }
+    } else {
+        state.currentOrder = {
+            id: Date.now(),
+            tableId: tableId,
+            items: [],
+            status: 'open',
+            createdAt: new Date().toISOString(),
+            cashierId: currentUser.id
+        };
+        table.orderId = state.currentOrder.id;
+        state.orders.push(state.currentOrder);
+        table.status = 'occupied';
+        saveToStorage();
+    }
+
+    navigateTo('order');
+}
+
+function getOrderTotal(orderId) {
+    const order = state.orders.find(o => o.id === orderId);
+    if (!order) return 0;
+
+    return calculateOrderTotal(order);
+}
+
+function calculateOrderTotal(order) {
+    const subtotal = order.items.reduce((sum, item) => {
+        const product = state.products.find(p => p.id === item.productId);
+        return sum + (product ? product.price * item.quantity : 0);
+    }, 0);
+
+    const discount = order.discount || 0;
+    const tax = subtotal * (state.settings.tax / 100);
+    const serviceCharge = subtotal * (state.settings.serviceCharge / 100);
+
+    return subtotal - discount + tax + serviceCharge;
+}
+
+// ============================================
+// ORDER
+// ============================================
+function renderOrder() {
+    if (!state.currentOrder || !state.currentTable) {
+        navigateTo('tables');
+        return;
+    }
+
+    const order = state.currentOrder;
+    const table = state.currentTable;
+    const total = calculateOrderTotal(order);
+
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            ${translate('table')} ${table.number} - ${translate(order.status)}
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-warning me-2" onclick="toggleWaseelStatus()">
+                                <i class="fas fa-sync-alt"></i> ${translate(table.waseelStatus)}
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="navigateTo('tables')">
+                                <i class="fas fa-arrow-left"></i> ${translate('close')}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="category-tabs mb-3" id="categoryTabs">
+                            <button class="category-tab active" data-category="all">${translate('all')}</button>
+                            ${state.categories.filter(c => c.status === 'active').map(cat => `
+                                <button class="category-tab" data-category="${cat.id}">
+                                    ${currentLanguage === 'ar' ? cat.nameAr : cat.nameEn}
+                                </button>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="product-grid" id="productGrid">
+                            ${renderProductsGrid('all')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">${translate('order_total')}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="orderItems">
+                            ${order.items.length === 0 ? `
+                                <p class="text-muted text-center">${translate('no_products')}</p>
+                            ` : order.items.map((item, index) => {
+                                const product = state.products.find(p => p.id === item.productId);
+                                if (!product) return '';
+                                const itemTotal = product.price * item.quantity;
+                                return `
+                                    <div class="order-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>${currentLanguage === 'ar' ? product.nameAr : product.nameEn}</strong>
+                                                <br>
+                                                <small>${state.settings.currency}${product.price.toFixed(2)} × ${item.quantity}</small>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <button class="btn btn-sm btn-outline-secondary me-2" onclick="updateItemQuantity(${index}, -1)">
+                                                    <i class="fas fa-minus-circle"></i>
+                                                </button>
+                                                <span>${item.quantity}</span>
+                                                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="updateItemQuantity(${index}, 1)">
+                                                    <i class="fas fa-plus-circle"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger ms-2" onclick="removeItem(${index})">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="text-end mt-2">
+                                            <strong>${state.settings.currency}${itemTotal.toFixed(2)}</strong>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between">
+                            <span>${translate('subtotal')}</span>
+                            <span>${state.settings.currency}${order.items.reduce((sum, item) => {
+                                const product = state.products.find(p => p.id === item.productId);
+                                return sum + (product ? product.price * item.quantity : 0);
+                            }, 0).toFixed(2)}</span>
+                        </div>
+                        
+                        ${state.settings.tax > 0 ? `
+                        <div class="d-flex justify-content-between">
+                            <span>${translate('tax')} (${state.settings.tax}%)</span>
+                            <span>${state.settings.currency}${(order.items.reduce((sum, item) => {
+                                const product = state.products.find(p => p.id === item.productId);
+                                return sum + (product ? product.price * item.quantity : 0);
+                            }, 0) * state.settings.tax / 100).toFixed(2)}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${state.settings.serviceCharge > 0 ? `
+                        <div class="d-flex justify-content-between">
+                            <span>${translate('service_charge')} (${state.settings.serviceCharge}%)</span>
+                            <span>${state.settings.currency}${(order.items.reduce((sum, item) => {
+                                const product = state.products.find(p => p.id === item.productId);
+                                return sum + (product ? product.price * item.quantity : 0);
+                            }, 0) * state.settings.serviceCharge / 100).toFixed(2)}</span>
+                        </div>
+                        ` : ''}
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between">
+                            <strong>${translate('final_total')}</strong>
+                            <strong class="text-primary">${state.settings.currency}${total.toFixed(2)}</strong>
+                        </div>
+                        
+                        <div class="mt-3">
+                            ${order.items.length > 0 ? `
+                                <button class="btn btn-success w-100" onclick="openPaymentModal()">
+                                    <i class="fas fa-money-bill-wave"></i> ${translate('payment')}
+                                </button>
+                            ` : `
+                                <button class="btn btn-warning w-100" onclick="clearOrder()">
+                                    <i class="fas fa-times-circle"></i> ${translate('clear_order')}
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Setup category tabs
+    document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            document.getElementById('productGrid').innerHTML = renderProductsGrid(e.target.dataset.category);
+        });
+    });
+
+    applyTranslations();
+}
+
+function renderProductsGrid(categoryId) {
+    let products = state.products.filter(p => p.status === 'active');
+    if (categoryId !== 'all') {
+        products = products.filter(p => p.categoryId === parseInt(categoryId));
+    }
+
+    return products.map(product => {
+        const category = state.categories.find(c => c.id === product.categoryId);
+        const categoryIcon = category ? category.icon : 'bi bi-cup-fill';
+        return `
+        <div class="product-card" onclick="addToOrder(${product.id})">
+            <div class="product-image-placeholder">
+                ${product.image ? `<img src="${product.image}" alt="${product.nameEn}">` : `<div style="width:80px;height:80px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border-radius:15px;display:flex;align-items:center;justify-content:center;"><i class="bi ${categoryIcon}" style="font-size:35px;color:white;"></i></div>`}
+            </div>
+            <div class="product-name">${currentLanguage === 'ar' ? product.nameAr : product.nameEn}</div>
+            <div class="product-price">${state.settings.currency}${product.price.toFixed(2)}</div>
+            ${product.stock <= product.minStock ? `<small class="text-danger">${translate('low_stock')}</small>` : ''}
+        </div>
+        `}).join('');
+}
+
+function addToOrder(productId) {
+    const product = state.products.find(p => p.id === productId);
+    if (!product || product.stock <= 0) {
+        showToast(translate('warning'), translate('out_of_stock'), 'warning');
+        return;
+    }
+
+    const existingItem = state.currentOrder.items.find(item => item.productId === productId);
+    if (existingItem) {
+        existingItem.quantity++;
+    } else {
+        state.currentOrder.items.push({
+            productId: productId,
+            quantity: 1,
+            price: product.price
+        });
+    }
+
+    // Update table status to occupied
+    if (state.currentTable) {
+        state.currentTable.status = 'occupied';
+    }
+
+    addAuditLog('item_added', `Added ${product.nameEn} to order`, state.currentOrder.id, productId, null);
+    saveToStorage();
+    renderOrder();
+}
+
+function updateItemQuantity(index, change) {
+    const item = state.currentOrder.items[index];
+    const product = state.products.find(p => p.id === item.productId);
+    
+    item.quantity += change;
+    
+    if (item.quantity <= 0) {
+        state.currentOrder.items.splice(index, 1);
+        addAuditLog('item_removed', `Removed ${product.nameEn} from order`, state.currentOrder.id, item.productId, null);
+    } else {
+        addAuditLog('quantity_changed', `Changed quantity of ${product.nameEn} to ${item.quantity}`, state.currentOrder.id, item.productId, item.quantity);
+    }
+    
+    saveToStorage();
+    renderOrder();
+}
+
+function removeItem(index) {
+    const item = state.currentOrder.items[index];
+    if (!item) return;
+    const product = state.products.find(p => p.id === item.productId);
+    
+    state.currentOrder.items.splice(index, 1);
+    addAuditLog('item_removed', `Removed ${product ? product.nameEn : 'unknown product'} from order`, state.currentOrder.id, item.productId, null);
+    
+    saveToStorage();
+    renderOrder();
+}
+
+function toggleWaseelStatus() {
+    if (!state.currentTable) return;
+    
+    state.currentTable.waseelStatus = state.currentTable.waseelStatus === 'waseel' ? 'non-waseel' : 'waseel';
+    addAuditLog('waseel_status_changed', `Changed waseel status to ${state.currentTable.waseelStatus}`, state.currentOrder?.id, null, null);
+    
+    saveToStorage();
+    renderOrder();
+}
+
+function clearOrder() {
+    if (!state.currentOrder || !state.currentTable) return;
+    
+    if (!confirm(translate('confirm_clear_order'))) return;
+    
+    // Remove order from active orders
+    state.orders = state.orders.filter(o => o.id !== state.currentOrder.id);
+    
+    // Clear table
+    state.currentTable.status = 'available';
+    state.currentTable.orderId = null;
+    state.currentTable.waseelStatus = 'waseel';
+    
+    addAuditLog('order_cleared', `Cleared order for table ${state.currentTable.number}`, state.currentOrder.id, null, null);
+    
+    saveToStorage();
+    state.currentOrder = null;
+    state.currentTable = null;
+    navigateTo('tables');
+}
+
+function openPaymentModal() {
+    const total = calculateOrderTotal(state.currentOrder);
+    document.getElementById('paymentTotal').value = state.settings.currency + total.toLocaleString();
+    
+    const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+    modal.show();
+}
+
+function completePayment() {
+    const total = calculateOrderTotal(state.currentOrder);
+    const method = document.getElementById('paymentMethod').value;
+
+    // Update inventory
+    state.currentOrder.items.forEach(item => {
+        const product = state.products.find(p => p.id === item.productId);
+        if (product) {
+            product.stock -= item.quantity;
+            const inventory = state.inventory.find(inv => inv.productId === product.id);
+            if (inventory) {
+                inventory.quantity = product.stock;
+                inventory.adjustments.push({
+                    date: new Date().toISOString(),
+                    quantity: -item.quantity,
+                    reason: 'sale',
+                    orderId: state.currentOrder.id
+                });
+            }
+        }
+    });
+
+    // Complete order
+    state.currentOrder.status = 'paid';
+    state.currentOrder.total = total;
+    state.currentOrder.paymentMethod = method;
+    state.currentOrder.amountPaid = total;
+    state.currentOrder.change = 0;
+    state.currentOrder.completedAt = new Date().toISOString();
+    state.currentOrder.date = new Date().toISOString();
+
+    // Save to history
+    const historyOrder = { ...state.currentOrder };
+    state.orderHistory.push(historyOrder);
+
+    // Clear table
+    state.currentTable.status = 'available';
+    state.currentTable.orderId = null;
+    state.currentTable.waseelStatus = 'waseel';
+
+    // Remove from active orders
+    state.orders = state.orders.filter(o => o.id !== state.currentOrder.id);
+
+    addAuditLog('payment_completed', `Payment completed for table ${state.currentTable.number}`, state.currentOrder.id, null, total);
+    saveToStorage();
+
+    // Close payment modal
+    bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+
+    // Show payment success animation
+    showPaymentSuccess();
+
+    // Show receipt after animation
+    setTimeout(() => {
+        showReceipt(historyOrder);
+    }, 2000);
+
+    // Reset current order
+    state.currentOrder = null;
+    state.currentTable = null;
+}
+
+function showPaymentSuccess() {
+    const overlay = document.getElementById('paymentSuccessOverlay');
+    overlay.classList.remove('d-none');
+    overlay.classList.add('d-flex');
+}
+
+function closePaymentSuccess() {
+    const overlay = document.getElementById('paymentSuccessOverlay');
+    overlay.classList.add('d-none');
+    overlay.classList.remove('d-flex');
+    navigateTo('tables');
+}
+
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+function showReceipt(order) {
+    const table = state.tables.find(t => t.id === order.tableId);
+    const cashier = state.users.find(u => u.id === order.cashierId);
+    
+    let receiptHTML = `
+        <div class="receipt-header">
+            <h3>${state.settings.shopName}</h3>
+            <p>${state.settings.address}</p>
+            <p>${state.settings.phone}</p>
+        </div>
+        <div class="receipt-body">
+            <p><strong>${translate('order_id')}:</strong> #${order.id}</p>
+            <p><strong>${translate('table')}:</strong> ${table ? table.number : 'N/A'}</p>
+            <p><strong>${translate('date')}:</strong> ${new Date(order.date).toLocaleDateString()}</p>
+            <p><strong>${translate('time')}:</strong> ${new Date(order.date).toLocaleTimeString()}</p>
+            <p><strong>${translate('cashier')}:</strong> ${cashier ? cashier.name : 'N/A'}</p>
+            <hr>
+    `;
+
+    order.items.forEach(item => {
+        const product = state.products.find(p => p.id === item.productId);
+        if (product) {
+            receiptHTML += `
+                <div class="receipt-item">
+                    <span>${currentLanguage === 'ar' ? product.nameAr : product.nameEn} × ${item.quantity}</span>
+                    <span>${state.settings.currency}${(product.price * item.quantity).toFixed(2)}</span>
+                </div>
+            `;
+        }
+    });
+
+    const subtotal = order.items.reduce((sum, item) => {
+        const product = state.products.find(p => p.id === item.productId);
+        return sum + (product ? product.price * item.quantity : 0);
+    }, 0);
+
+    receiptHTML += `
+        <hr>
+        <div class="receipt-item">
+            <span>${translate('subtotal')}</span>
+            <span>${state.settings.currency}${subtotal.toFixed(2)}</span>
+        </div>
+    `;
+
+    if (state.settings.tax > 0) {
+        receiptHTML += `
+            <div class="receipt-item">
+                <span>${translate('tax')} (${state.settings.tax}%)</span>
+                <span>${state.settings.currency}${(subtotal * state.settings.tax / 100).toFixed(2)}</span>
+            </div>
+        `;
+    }
+
+    if (state.settings.serviceCharge > 0) {
+        receiptHTML += `
+            <div class="receipt-item">
+                <span>${translate('service_charge')} (${state.settings.serviceCharge}%)</span>
+                <span>${state.settings.currency}${(subtotal * state.settings.serviceCharge / 100).toFixed(2)}</span>
+            </div>
+        `;
+    }
+
+    receiptHTML += `
+        <div class="receipt-total">
+            <div class="receipt-item">
+                <strong><span>${translate('total')}</span></strong>
+                <strong><span>${state.settings.currency}${order.total.toFixed(2)}</span></strong>
+            </div>
+            <div class="receipt-item">
+                <span>${translate('amount_paid')}</span>
+                <span>${state.settings.currency}${order.amountPaid.toFixed(2)}</span>
+            </div>
+            <div class="receipt-item">
+                <span>${translate('change')}</span>
+                <span>${state.settings.currency}${order.change.toFixed(2)}</span>
+            </div>
+            <div class="receipt-item">
+                <span>${translate('payment_method')}</span>
+                <span>${translate(order.paymentMethod)}</span>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p>Thank you for your visit!</p>
+        </div>
+    </div>
+    `;
+
+    document.getElementById('receiptContent').innerHTML = receiptHTML;
+    const modal = new bootstrap.Modal(document.getElementById('receiptModal'));
+    modal.show();
+}
+
+function printReceipt() {
+    window.print();
+}
+
+// ============================================
+// PRODUCTS
+// ============================================
+function renderProducts() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 data-translate="products">${translate('products')}</h2>
+            <button class="btn btn-primary" onclick="openProductModal()">
+                <i class="fas fa-plus-circle"></i> ${translate('add_product')}
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="search-box mb-3">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="form-control" id="productSearch" placeholder="${translate('search')}..." oninput="filterProducts()">
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th data-translate="product_name_en">${translate('product_name_en')}</th>
+                                <th data-translate="product_name_ar">${translate('product_name_ar')}</th>
+                                <th data-translate="category">${translate('category')}</th>
+                                <th data-translate="selling_price">${translate('selling_price')}</th>
+                                <th data-translate="status">${translate('status')}</th>
+                                <th data-translate="actions">${translate('actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            ${renderProductsTable()}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+
+    applyTranslations();
+}
+
+function renderProductsTable(filter = '') {
+    let products = state.products;
+    
+    if (filter) {
+        const lowerFilter = filter.toLowerCase();
+        products = products.filter(p => 
+            p.nameEn.toLowerCase().includes(lowerFilter) ||
+            p.nameAr.includes(filter) ||
+            p.sku.toLowerCase().includes(lowerFilter)
+        );
+    }
+
+    return products.map(product => {
+        const category = state.categories.find(c => c.id === product.categoryId);
+        return `
+            <tr class="${product.stock <= product.minStock ? 'low-stock' : ''} ${product.stock <= 0 ? 'out-of-stock' : ''}">
+                <td>${product.nameEn}</td>
+                <td>${product.nameAr}</td>
+                <td>${category ? (currentLanguage === 'ar' ? category.nameAr : category.nameEn) : 'N/A'}</td>
+                <td>${state.settings.currency}${product.price.toFixed(2)}</td>
+                <td>
+                    <span class="status-badge ${product.status}">${translate(product.status)}</span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary me-1" onclick="openProductModal(${product.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function filterProducts() {
+    const filter = document.getElementById('productSearch').value;
+    document.getElementById('productsTableBody').innerHTML = renderProductsTable(filter);
+}
+
+function openProductModal(productId = null) {
+    const product = productId ? state.products.find(p => p.id === productId) : null;
+    selectedProductImage = product ? product.image || '' : '';
+    
+    // Populate categories
+    const categorySelect = document.getElementById('productCategory');
+    categorySelect.innerHTML = state.categories.map(c => 
+        `<option value="${c.id}">${currentLanguage === 'ar' ? c.nameAr : c.nameEn}</option>`
+    ).join('');
+
+    if (product) {
+        document.getElementById('productId').value = product.id;
+        document.getElementById('productNameEn').value = product.nameEn;
+        document.getElementById('productNameAr').value = product.nameAr;
+        document.getElementById('productCategory').value = product.categoryId;
+        document.getElementById('productSku').value = product.sku || '';
+        document.getElementById('productCost').value = product.cost;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productBarcode').value = product.barcode || '';
+        document.getElementById('productStatus').value = product.status;
+        document.getElementById('productImage').value = product.image || '';
+        showProductImagePreview(product.image || '');
+    } else {
+        document.getElementById('productForm').reset();
+        document.getElementById('productId').value = '';
+        showProductImagePreview('');
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('productModal'));
+    modal.show();
+}
+
+function handleProductImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        selectedProductImage = reader.result;
+        showProductImagePreview(selectedProductImage);
+    };
+    reader.readAsDataURL(file);
+}
+
+function showProductImagePreview(image) {
+    const preview = document.getElementById('productImagePreview');
+    if (!preview) return;
+    preview.src = image;
+    preview.classList.toggle('d-none', !image);
+}
+
+function saveProduct() {
+    const productId = document.getElementById('productId').value;
+    const productData = {
+        nameEn: document.getElementById('productNameEn').value,
+        nameAr: document.getElementById('productNameAr').value,
+        categoryId: parseInt(document.getElementById('productCategory').value),
+        sku: document.getElementById('productSku').value,
+        cost: parseFloat(document.getElementById('productCost').value),
+        price: parseFloat(document.getElementById('productPrice').value),
+        barcode: document.getElementById('productBarcode').value,
+        status: document.getElementById('productStatus').value,
+        image: selectedProductImage || document.getElementById('productImage').value
+    };
+
+    if (productId) {
+        const index = state.products.findIndex(p => p.id === parseInt(productId));
+        const oldProduct = { ...state.products[index] };
+        state.products[index] = { ...state.products[index], ...productData };
+        addAuditLog('product_updated', `Updated product ${productData.nameEn}`, parseInt(productId), JSON.stringify(oldProduct), JSON.stringify(productData));
+    } else {
+        productData.id = Date.now();
+        productData.stock = 100;
+        productData.minStock = 10;
+        state.products.push(productData);
+        state.inventory.push({
+            productId: productData.id,
+            quantity: productData.stock,
+            adjustments: []
+        });
+        addAuditLog('product_added', `Added product ${productData.nameEn}`, productData.id, null, JSON.stringify(productData));
+    }
+
+    saveToStorage();
+    bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+    renderProducts();
+    showToast(translate('success'), productId ? translate('edit_product') : translate('add_product'), 'success');
+}
+
+function deleteProduct(productId) {
+    if (!confirm(translate('confirm_delete'))) return;
+    
+    const product = state.products.find(p => p.id === productId);
+    state.products = state.products.filter(p => p.id !== productId);
+    addAuditLog('product_deleted', `Deleted product ${product.nameEn}`, productId, JSON.stringify(product), null);
+    saveToStorage();
+    renderProducts();
+    showToast(translate('success'), translate('delete_product'), 'success');
+}
+
+// ============================================
+// CATEGORIES
+// ============================================
+function renderCategories() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 data-translate="categories">${translate('categories')}</h2>
+            <button class="btn btn-primary" onclick="openCategoryModal()">
+                <i class="fas fa-plus-circle"></i> ${translate('add_category')}
+            </button>
+        </div>
+        
+        <div class="row">
+            ${state.categories.map(category => `
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5><i class="bi ${category.icon}"></i> ${currentLanguage === 'ar' ? category.nameAr : category.nameEn}</h5>
+                                    <span class="status-badge ${category.status}">${translate(category.status)}</span>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-primary me-1" onclick="openCategoryModal(${category.id})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(${category.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    applyTranslations();
+}
+
+function openCategoryModal(categoryId = null) {
+    const category = categoryId ? state.categories.find(c => c.id === categoryId) : null;
+
+    if (category) {
+        document.getElementById('categoryId').value = category.id;
+        document.getElementById('categoryNameEn').value = category.nameEn;
+        document.getElementById('categoryNameAr').value = category.nameAr;
+        document.getElementById('categoryIcon').value = category.icon || '';
+        document.getElementById('categoryStatus').value = category.status;
+    } else {
+        document.getElementById('categoryForm').reset();
+        document.getElementById('categoryId').value = '';
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('categoryModal'));
+    modal.show();
+}
+
+function saveCategory() {
+    const categoryId = document.getElementById('categoryId').value;
+    const categoryData = {
+        nameEn: document.getElementById('categoryNameEn').value,
+        nameAr: document.getElementById('categoryNameAr').value,
+        icon: document.getElementById('categoryIcon').value,
+        status: document.getElementById('categoryStatus').value
+    };
+
+    if (categoryId) {
+        const index = state.categories.findIndex(c => c.id === parseInt(categoryId));
+        const oldCategory = { ...state.categories[index] };
+        state.categories[index] = { ...state.categories[index], ...categoryData };
+        addAuditLog('category_updated', `Updated category ${categoryData.nameEn}`, parseInt(categoryId), JSON.stringify(oldCategory), JSON.stringify(categoryData));
+    } else {
+        categoryData.id = Date.now();
+        state.categories.push(categoryData);
+        addAuditLog('category_added', `Added category ${categoryData.nameEn}`, categoryData.id, null, JSON.stringify(categoryData));
+    }
+
+    saveToStorage();
+    bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
+    renderCategories();
+    showToast(translate('success'), categoryId ? translate('edit_category') : translate('add_category'), 'success');
+}
+
+function deleteCategory(categoryId) {
+    const hasProducts = state.products.some(p => p.categoryId === categoryId);
+    if (hasProducts) {
+        showToast(translate('error'), 'Cannot delete category with products', 'error');
+        return;
+    }
+
+    if (!confirm(translate('confirm_delete'))) return;
+    
+    const category = state.categories.find(c => c.id === categoryId);
+    state.categories = state.categories.filter(c => c.id !== categoryId);
+    addAuditLog('category_deleted', `Deleted category ${category.nameEn}`, categoryId, JSON.stringify(category), null);
+    saveToStorage();
+    renderCategories();
+    showToast(translate('success'), translate('delete_category'), 'success');
+}
+
+// ============================================
+// EXPENSES
+// ============================================
+function renderExpenses() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 data-translate="expenses">${translate('expenses')}</h2>
+            <button class="btn btn-primary" onclick="openExpenseModal()">
+                <i class="fas fa-plus-circle"></i> ${translate('add_expense')}
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th data-translate="date">${translate('date')}</th>
+                                <th data-translate="category">${translate('category')}</th>
+                                <th data-translate="description">${translate('description')}</th>
+                                <th data-translate="amount">${translate('amount')}</th>
+                                <th data-translate="actions">${translate('actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${state.expenses.map(expense => `
+                                <tr>
+                                    <td>${new Date(expense.date).toLocaleDateString()}</td>
+                                    <td>${translate(expense.category)}</td>
+                                    <td>${expense.description}</td>
+                                    <td>${state.settings.currency}${expense.amount.toFixed(2)}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary me-1" onclick="openExpenseModal(${expense.id})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteExpense(${expense.id})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+
+    applyTranslations();
+}
+
+function openExpenseModal(expenseId = null) {
+    const expense = expenseId ? state.expenses.find(e => e.id === expenseId) : null;
+
+    if (expense) {
+        document.getElementById('expenseId').value = expense.id;
+        document.getElementById('expenseCategory').value = expense.category;
+        document.getElementById('expenseDescription').value = expense.description;
+        document.getElementById('expenseAmount').value = expense.amount;
+        document.getElementById('expenseDate').value = expense.date;
+        document.getElementById('expenseNotes').value = expense.notes || '';
+    } else {
+        document.getElementById('expenseForm').reset();
+        document.getElementById('expenseId').value = '';
+        document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('expenseModal'));
+    modal.show();
+}
+
+function saveExpense() {
+    const expenseId = document.getElementById('expenseId').value;
+    const expenseData = {
+        category: document.getElementById('expenseCategory').value,
+        description: document.getElementById('expenseDescription').value,
+        amount: parseFloat(document.getElementById('expenseAmount').value),
+        date: document.getElementById('expenseDate').value,
+        notes: document.getElementById('expenseNotes').value,
+        employeeId: currentUser.id
+    };
+
+    if (expenseId) {
+        const index = state.expenses.findIndex(e => e.id === parseInt(expenseId));
+        const oldExpense = { ...state.expenses[index] };
+        state.expenses[index] = { ...state.expenses[index], ...expenseData };
+        addAuditLog('expense_updated', `Updated expense ${expenseData.description}`, parseInt(expenseId), JSON.stringify(oldExpense), JSON.stringify(expenseData));
+    } else {
+        expenseData.id = Date.now();
+        state.expenses.push(expenseData);
+        addAuditLog('expense_added', `Added expense ${expenseData.description}`, expenseData.id, null, JSON.stringify(expenseData));
+    }
+
+    saveToStorage();
+    bootstrap.Modal.getInstance(document.getElementById('expenseModal')).hide();
+    renderExpenses();
+    showToast(translate('success'), expenseId ? translate('edit_expense') : translate('add_expense'), 'success');
+}
+
+function deleteExpense(expenseId) {
+    if (!confirm(translate('confirm_delete'))) return;
+    
+    const expense = state.expenses.find(e => e.id === expenseId);
+    state.expenses = state.expenses.filter(e => e.id !== expenseId);
+    addAuditLog('expense_deleted', `Deleted expense ${expense.description}`, expenseId, JSON.stringify(expense), null);
+    saveToStorage();
+    renderExpenses();
+    showToast(translate('success'), translate('delete_expense'), 'success');
+}
+
+// ============================================
+// REPORTS
+// ============================================
+function renderReports() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h2 class="mb-4" data-translate="reports">${translate('reports')}</h2>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label" data-translate="filter">${translate('filter')}</label>
+                        <select class="form-control" id="reportPeriod" onchange="generateReport()">
+                            <option value="day" data-translate="day">${translate('day')}</option>
+                            <option value="week" data-translate="this_week">${translate('this_week')}</option>
+                            <option value="month" data-translate="this_month">${translate('this_month')}</option>
+                            <option value="year" data-translate="this_year">${translate('this_year')}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="reportContent">
+            ${generateReportHTML('day')}
+        </div>
+    `;
+
+    renderReportCharts('day');
+    applyTranslations();
+}
+
+function generateReport() {
+    const period = document.getElementById('reportPeriod').value;
+    document.getElementById('reportContent').innerHTML = generateReportHTML(period);
+    renderReportCharts(period);
+}
+
+function getReportDateRange(period) {
+    const now = new Date();
+    const endDate = new Date(now);
+    let startDate;
+
+    switch (period) {
+        case 'day':
+        case 'today':
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            break;
+        case 'week':
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - 7);
+            break;
+        case 'month':
+            startDate = new Date(now);
+            startDate.setMonth(now.getMonth() - 1);
+            break;
+        case 'year':
+            startDate = new Date(now);
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+    }
+
+    return { startDate, endDate };
+}
+
+function getReportData(period) {
+    const { startDate, endDate } = getReportDateRange(period);
+    const filteredOrders = state.orderHistory.filter(o => new Date(o.date) >= startDate && new Date(o.date) <= endDate);
+    const filteredExpenses = state.expenses.filter(e => new Date(e.date) >= startDate && new Date(e.date) <= endDate);
+    return { filteredOrders, filteredExpenses };
+}
+
+function generateReportHTML(period) {
+    const { filteredOrders, filteredExpenses } = getReportData(period);
+
+    const revenue = filteredOrders.reduce((sum, o) => sum + o.total, 0);
+    const costOfGoods = filteredOrders.reduce((sum, o) => {
+        return sum + o.items.reduce((itemSum, item) => {
+            const product = state.products.find(p => p.id === item.productId);
+            return itemSum + (product ? product.cost * item.quantity : 0);
+        }, 0);
+    }, 0);
+    const expenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+    const profit = revenue - costOfGoods - expenses;
+    const ordersCount = filteredOrders.length;
+    const itemsSold = filteredOrders.reduce((sum, o) => sum + o.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0);
+    const avgOrderValue = ordersCount > 0 ? revenue / ordersCount : 0;
+
+    return `
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${state.settings.currency}${revenue.toFixed(2)}</h3>
+                    <p data-translate="revenue">${translate('revenue')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${state.settings.currency}${profit.toFixed(2)}</h3>
+                    <p data-translate="profit">${translate('profit')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${state.settings.currency}${costOfGoods.toFixed(2)}</h3>
+                    <p data-translate="cost_of_goods">${translate('cost_of_goods')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${state.settings.currency}${expenses.toFixed(2)}</h3>
+                    <p data-translate="expenses">${translate('expenses')}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${ordersCount}</h3>
+                    <p data-translate="orders_count">${translate('orders_count')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${itemsSold}</h3>
+                    <p data-translate="items_sold">${translate('items_sold')}</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <h3>${state.settings.currency}${avgOrderValue.toFixed(2)}</h3>
+                    <p data-translate="avg_order_value">${translate('avg_order_value')}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card p-4">
+                    <h5 class="mb-3" data-translate="sales_by_category">${translate('sales_by_category')}</h5>
+                    <canvas id="categorySalesChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card p-4">
+                    <h5 class="mb-3" data-translate="payment_methods">${translate('payment_methods')}</h5>
+                    <canvas id="paymentMethodsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderReportCharts(period) {
+    const categoryCanvas = document.getElementById('categorySalesChart');
+    const paymentCanvas = document.getElementById('paymentMethodsChart');
+    if (!categoryCanvas || !paymentCanvas || typeof Chart === 'undefined') return;
+
+    reportCharts.forEach(chart => chart.destroy());
+    reportCharts = [];
+
+    const { filteredOrders } = getReportData(period);
+    const categorySales = {};
+    const paymentTotals = {};
+
+    filteredOrders.forEach(order => {
+        paymentTotals[order.paymentMethod || 'cash'] = (paymentTotals[order.paymentMethod || 'cash'] || 0) + order.total;
+        order.items.forEach(item => {
+            const product = state.products.find(p => p.id === item.productId);
+            if (!product) return;
+            const category = product && state.categories.find(c => c.id === product.categoryId);
+            const categoryName = category ? (currentLanguage === 'ar' ? category.nameAr : category.nameEn) : translate('other');
+            categorySales[categoryName] = (categorySales[categoryName] || 0) + product.price * item.quantity;
+        });
+    });
+
+    reportCharts.push(new Chart(categoryCanvas, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(categorySales),
+            datasets: [{
+                data: Object.values(categorySales),
+                backgroundColor: ['#b88a44', '#7b552b', '#d9b777', '#4f4031', '#a9753c']
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    }));
+
+    reportCharts.push(new Chart(paymentCanvas, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(paymentTotals).map(method => translate(method)),
+            datasets: [{
+                label: translate('total'),
+                data: Object.values(paymentTotals),
+                backgroundColor: '#8a6032'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    }));
+}
+
+// ============================================
+// INVENTORY
+// ============================================
+function renderInventory() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h2 class="mb-4" data-translate="inventory">${translate('inventory')}</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th data-translate="product_name_en">${translate('product_name_en')}</th>
+                                <th data-translate="product_name_ar">${translate('product_name_ar')}</th>
+                                <th data-translate="stock">${translate('stock')}</th>
+                                <th data-translate="min_stock">${translate('min_stock')}</th>
+                                <th data-translate="status">${translate('status')}</th>
+                                <th data-translate="actions">${translate('actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${state.products.map(product => {
+                                const inventory = state.inventory.find(inv => inv.productId === product.id);
+                                const stockStatus = product.stock <= 0 ? 'out-of-stock' : (product.stock <= product.minStock ? 'low-stock' : '');
+                                return `
+                                    <tr class="${stockStatus}">
+                                        <td>${product.nameEn}</td>
+                                        <td>${product.nameAr}</td>
+                                        <td>${product.stock}</td>
+                                        <td>${product.minStock}</td>
+                                        <td>
+                                            ${product.stock <= 0 ? `<span class="status-badge cancelled">${translate('out_of_stock')}</span>` : 
+                                              product.stock <= product.minStock ? `<span class="status-badge payment-pending">${translate('low_stock')}</span>` : 
+                                              `<span class="status-badge paid">${translate('in_stock')}</span>`}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" onclick="openStockModal(${product.id})">
+                                                <i class="fas fa-edit"></i> ${translate('adjust_stock')}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+
+    applyTranslations();
+}
+
+function openStockModal(productId) {
+    const product = state.products.find(p => p.id === productId);
+    const newQuantity = prompt(`${translate('new_quantity')} (${product.nameEn}):`, product.stock);
+    
+    if (newQuantity !== null) {
+        const reason = prompt(translate('reason'), 'Manual adjustment');
+        const oldQuantity = product.stock;
+        product.stock = parseInt(newQuantity);
+        
+        const inventory = state.inventory.find(inv => inv.productId === productId);
+        if (inventory) {
+            inventory.quantity = product.stock;
+            inventory.adjustments.push({
+                date: new Date().toISOString(),
+                        oldQuantity: oldQuantity,
+                        newQuantity: product.stock,
+                        reason: reason || 'Manual adjustment',
+                        userId: currentUser.id
+                    });
+                }
+                
+                addAuditLog('stock_adjusted', `Adjusted stock for ${product.nameEn} from ${oldQuantity} to ${product.stock}`, productId, oldQuantity, product.stock);
+                saveToStorage();
+                renderInventory();
+                showToast(translate('success'), translate('adjust_stock'), 'success');
+            }
+        }
+
+        // ============================================
+        // AUDIT LOG
+        // ============================================
+        function renderAuditLog() {
+            const content = document.getElementById('mainContent');
+            content.innerHTML = `
+                <h2 class="mb-4" data-translate="audit_log">${translate('audit_log')}</h2>
+                
+                <div class="card">
+                    <div class="card-body">
+                        ${state.auditLogs.length === 0 ? `
+                            <p class="text-muted text-center">${translate('no_logs')}</p>
+                        ` : state.auditLogs.slice().reverse().map(log => {
+                            const user = state.users.find(u => u.id === log.userId);
+                            return `
+                                <div class="audit-log-item">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>${log.action}</strong>
+                                        <small class="text-muted">${new Date(log.timestamp).toLocaleString()}</small>
+                                    </div>
+                                    <p class="mb-1">${log.description}</p>
+                                    <small class="text-muted">
+                                        ${translate('user')}: ${user ? user.username : 'Unknown'} | 
+                                        ${translate('role')}: ${user ? user.role : 'Unknown'}
+                                    </small>
+                                    ${log.oldValue ? `<br><small class="text-muted">${translate('old_value')}: ${log.oldValue}</small>` : ''}
+                                    ${log.newValue ? `<br><small class="text-muted">${translate('new_value')}: ${log.newValue}</small>` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+
+            applyTranslations();
+        }
+
+        function addAuditLog(action, description, recordId, oldValue, newValue) {
+            state.auditLogs.push({
+                id: Date.now(),
+                userId: currentUser ? currentUser.id : null,
+                action: action,
+                description: description,
+                recordId: recordId,
+                oldValue: oldValue ? String(oldValue) : null,
+                newValue: newValue ? String(newValue) : null,
+                timestamp: new Date().toISOString()
+            });
+            saveToStorage();
+        }
+
+        // ============================================
+        // SETTINGS
+        // ============================================
+        function renderSettings() {
+            const content = document.getElementById('mainContent');
+            content.innerHTML = `
+                <h2 class="mb-4" data-translate="settings">${translate('settings')}</h2>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <button class="btn btn-primary mb-3" onclick="openSettingsModal()">
+                            <i class="fas fa-edit"></i> ${translate('edit')}
+                        </button>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <strong>${translate('shop_name')}:</strong>
+                                <p>${state.settings.shopName}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${translate('phone')}:</strong>
+                                <p>${state.settings.phone}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${translate('address')}:</strong>
+                                <p>${state.settings.address}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${translate('currency')}:</strong>
+                                <p>${state.settings.currency}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${translate('tax_percentage')}:</strong>
+                                <p>${state.settings.tax}%</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${translate('service_charge')}:</strong>
+                                <p>${state.settings.serviceCharge}%</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>${translate('backup_retention')}:</strong>
+                                <p>${state.settings.backupRetention} days</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            applyTranslations();
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settingShopName').value = state.settings.shopName;
+            document.getElementById('settingPhone').value = state.settings.phone;
+            document.getElementById('settingAddress').value = state.settings.address;
+            document.getElementById('settingCurrency').value = state.settings.currency;
+            document.getElementById('settingTax').value = state.settings.tax;
+            document.getElementById('settingServiceCharge').value = state.settings.serviceCharge;
+            document.getElementById('settingLogo').value = state.settings.logo || '';
+            document.getElementById('settingBackupRetention').value = state.settings.backupRetention;
+
+            const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
+            modal.show();
+        }
+
+        function saveSettings() {
+            state.settings = {
+                shopName: document.getElementById('settingShopName').value,
+                phone: document.getElementById('settingPhone').value,
+                address: document.getElementById('settingAddress').value,
+                currency: document.getElementById('settingCurrency').value,
+                tax: parseFloat(document.getElementById('settingTax').value) || 0,
+                serviceCharge: parseFloat(document.getElementById('settingServiceCharge').value) || 0,
+                logo: document.getElementById('settingLogo').value,
+                backupRetention: parseInt(document.getElementById('settingBackupRetention').value) || 7
+            };
+
+            addAuditLog('settings_updated', 'Updated system settings', null, null, JSON.stringify(state.settings));
+            saveToStorage();
+            bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
+            renderSettings();
+            showToast(translate('success'), translate('settings'), 'success');
+        }
+
+        // ============================================
+        // ADMIN AUTHORIZATION
+        // ============================================
+        let pendingAction = null;
+
+        function requireAdminAuth(action) {
+            pendingAction = action;
+            const modal = new bootstrap.Modal(document.getElementById('adminAuthModal'));
+            modal.show();
+        }
+
+        function verifyAdminAuth() {
+            const username = document.getElementById('adminAuthUsername').value;
+            const password = document.getElementById('adminAuthPassword').value;
+
+            const admin = state.users.find(u => u.username === username && u.password === password && u.role === 'admin');
+
+            if (admin) {
+                bootstrap.Modal.getInstance(document.getElementById('adminAuthModal')).hide();
+                if (pendingAction) {
+                    pendingAction();
+                    pendingAction = null;
+                }
+            } else {
+                showToast(translate('error'), translate('invalid_credentials'), 'error');
+            }
+        }
+
+        // ============================================
+        // TRANSLATION
+        // ============================================
+        function translate(key) {
+            return translations[currentLanguage][key] || key;
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'ar' : 'en';
+            document.documentElement.lang = currentLanguage;
+            document.body.classList.toggle('rtl', currentLanguage === 'ar');
+            document.querySelectorAll('.language-code').forEach(code => {
+                code.textContent = currentLanguage === 'en' ? 'AR' : 'EN';
+            });
+            if (currentUser) {
+                updateNavigation();
+                renderSidebar();
+                navigateTo(currentPage);
+            }
+            applyTranslations();
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                element.textContent = translate(key);
+            });
+        }
+
+        // ============================================
+        // TOAST NOTIFICATIONS
+        // ============================================
+        function showToast(title, message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = `toast-${Date.now()}`;
+            
+            const bgClass = type === 'success' ? 'bg-success' : 
+                           type === 'error' ? 'bg-danger' : 
+                           type === 'warning' ? 'bg-warning' : 'bg-info';
+            
+            const toastHTML = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgClass}" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong>: ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+    <!-- 
+    ============================================
+    PRODUCTION SECURITY & BACKEND REQUIREMENTS
+    ============================================
+    
+    IMPORTANT: This is a FRONTEND-ONLY PROTOTYPE for demonstration purposes.
+    A production system requires a proper backend implementation.
+    
+    CRITICAL SECURITY REQUIREMENTS FOR PRODUCTION:
+    
+    1. AUTHENTICATION & AUTHORIZATION
+       - NEVER store passwords in plain text (use bcrypt/scrypt/Argon2)
+       - Implement secure server-side sessions or JWT with proper validation
+       - Use HTTPS only in production
+       - Implement rate limiting on login endpoints
+       - Never trust client-side role checks - validate on server
+       - Implement CSRF protection for state-changing operations
+    
+    2. DATABASE
+       - Use PostgreSQL or MySQL (NOT localStorage)
+       - Implement proper connection pooling
+       - Use parameterized queries to prevent SQL injection
+       - Implement foreign key constraints
+       - Create proper indexes for performance
+       - Regular database backups
+    
+    3. API SECURITY
+       - Validate ALL inputs on the server
+       - Never trust prices, totals, or permissions from the client
+       - Implement proper error handling (don't expose stack traces)
+       - Use CORS properly
+       - Implement API rate limiting
+       - Log all API access for audit trails
+    
+    4. REAL-TIME COMMUNICATION
+       - Use Socket.IO with proper authentication
+       - Validate all socket events on the server
+       - Implement room-based access control
+       - Never broadcast sensitive data
+    
+    5. BACKUP SYSTEM
+       - Implement automated scheduled backups
+       - Store backups in a separate location
+       - Implement backup rotation (keep last 7+ days)
+       - Test restore procedures regularly
+       - Encrypt backups containing sensitive data
+    
+    6. MULTI-DEVICE ARCHITECTURE
+       - All state must be stored on the server
+       - Use WebSocket for real-time updates
+       - Implement optimistic UI updates with server confirmation
+       - Handle network disconnections gracefully
+    
+    RECOMMENDED PRODUCTION STACK:
+    
+    Frontend:
+    - HTML5 + CSS3 + Bootstrap 5
+    - Vanilla JavaScript (or React/Vue if preferred)
+    
+    Backend:
+    - Node.js + Express
+    - Socket.IO for real-time communication
+    
+    Database:
+    - PostgreSQL (recommended) or MySQL
+    
+    Authentication:
+    - bcrypt for password hashing
+    - JWT or secure server-side sessions
+    
+    Recommended Database Schema:
+    
+    CREATE TABLE users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        role VARCHAR(20) NOT NULL,
+        name VARCHAR(100),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE TABLE products (
+        id SERIAL PRIMARY KEY,
+        name_en VARCHAR(100) NOT NULL,
+        name_ar VARCHAR(100),
+        category_id INTEGER REFERENCES categories(id),
+        cost DECIMAL(10,2) NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        stock INTEGER DEFAULT 0,
+        min_stock INTEGER DEFAULT 0,
+        sku VARCHAR(50),
+        barcode VARCHAR(50),
+        image TEXT,
+        status VARCHAR(20) DEFAULT 'active',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE TABLE categories (
+        id SERIAL PRIMARY KEY,
+        name_en VARCHAR(50) NOT NULL,
+        name_ar VARCHAR(50),
+        icon VARCHAR(50),
+        status VARCHAR(20) DEFAULT 'active'
+    );
+    
+    CREATE TABLE tables (
+        id SERIAL PRIMARY KEY,
+        number INTEGER UNIQUE NOT NULL,
+        status VARCHAR(20) DEFAULT 'available',
+        current_order_id INTEGER REFERENCES orders(id),
+        waseel_status VARCHAR(20) DEFAULT 'waseel'
+    );
+    
+    CREATE TABLE orders (
+        id SERIAL PRIMARY KEY,
+        table_id INTEGER REFERENCES tables(id),
+        cashier_id INTEGER REFERENCES users(id),
+        status VARCHAR(20) DEFAULT 'open',
+        subtotal DECIMAL(10,2),
+        discount DECIMAL(10,2) DEFAULT 0,
+        tax DECIMAL(10,2) DEFAULT 0,
+        service_charge DECIMAL(10,2) DEFAULT 0,
+        total DECIMAL(10,2),
+        payment_method VARCHAR(20),
+        amount_paid DECIMAL(10,2),
+        change DECIMAL(10,2),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        completed_at TIMESTAMP
+    );
+    
+    CREATE TABLE order_items (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER REFERENCES orders(id),
+        product_id INTEGER REFERENCES products(id),
+        quantity INTEGER NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE TABLE expenses (
+        id SERIAL PRIMARY KEY,
+        category VARCHAR(50) NOT NULL,
+        description TEXT,
+        amount DECIMAL(10,2) NOT NULL,
+        date DATE NOT NULL,
+        employee_id INTEGER REFERENCES users(id),
+        notes TEXT
+    );
+    
+    CREATE TABLE audit_logs (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        action VARCHAR(100) NOT NULL,
+        description TEXT,
+        record_id INTEGER,
+        old_value TEXT,
+        new_value TEXT,
+        ip_address INET,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE TABLE settings (
+        id SERIAL PRIMARY KEY,
+        key VARCHAR(50) UNIQUE NOT NULL,
+        value TEXT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    NEVER USE THIS PROTOTYPE FOR PRODUCTION WITHOUT PROPER BACKEND IMPLEMENTATION.
+    -->
+</body>
+</html>
