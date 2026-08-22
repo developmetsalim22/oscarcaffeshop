@@ -2069,22 +2069,24 @@
             }
 
             const profile = profileSnapshot.data() || {};
-            if (!['admin', 'cashier'].includes(profile.role)) {
+            const finalRole = resolvedRole;
+            const profileRole = ['admin', 'cashier'].includes(profile.role) ? profile.role : finalRole;
+
+            if (profileRole !== finalRole || !['admin', 'cashier'].includes(profile.role)) {
                 await profileRef.set({
                     email: profile.email || authUser.email || '',
-                    role: resolvedRole,
-                    username: profile.username || (authUser.email || '').split('@')[0] || resolvedRole,
-                    name: profile.name || (resolvedRole === 'admin' ? 'Admin User' : 'Cashier User'),
+                    role: finalRole,
+                    username: profile.username || (authUser.email || '').split('@')[0] || finalRole,
+                    name: profile.name || (finalRole === 'admin' ? 'Admin User' : 'Cashier User'),
                     updatedAt: new Date().toISOString()
                 }, { merge: true });
-                profile.role = resolvedRole;
             }
 
-            const localUser = state.users.find(user => user.role === profile.role)
-                || state.users.find(user => user.role === resolvedRole);
+            const localUser = state.users.find(user => user.role === finalRole)
+                || state.users.find(user => user.role === profileRole);
             if (!localUser) throw new Error('Matching POS role is missing.');
 
-            return { ...localUser, email: profile.email || authUser.email, firebaseUid: authUser.uid };
+            return { ...localUser, email: profile.email || authUser.email, firebaseUid: authUser.uid, role: finalRole };
         }
 
         function initializeDemoData() {
